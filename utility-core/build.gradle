@@ -1,0 +1,8 @@
+dependencies {
+    testCompile 'junit:junit:4.12'
+
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
+    compile group: 'org.apache.poi', name: 'poi', version: '3.6'
+
+}
