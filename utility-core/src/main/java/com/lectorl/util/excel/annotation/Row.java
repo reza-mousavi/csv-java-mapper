@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/5/2016
+ * This annotation denotes excel row.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
