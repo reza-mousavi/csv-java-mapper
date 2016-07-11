@@ -25,13 +25,6 @@ import java.util.Date;
 public class CellUtilTest {
 
     @Test
-    public void assertCellType() {
-        assertBooleanTypeChecking();
-        assertStringTypeChecking();
-        assertDateTypeChecking();
-    }
-
-    @Test
     public void testDateCellCreation() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
@@ -232,21 +225,4 @@ public class CellUtilTest {
         return CellUtil.createCellForString(workbook, header, 0, value);
     }
 
-    private void assertDateTypeChecking() {
-        Assert.assertEquals("Date type assertion", 0, CellUtil.getCellType(new Date()));
-        Assert.assertNotEquals("Date type assertion", Cell.CELL_TYPE_BLANK, CellUtil.getCellType(new Date()));
-        Assert.assertNotEquals("Date type assertion", Cell.CELL_TYPE_BOOLEAN, CellUtil.getCellType(new Date()));
-    }
-
-    private void assertStringTypeChecking() {
-        Assert.assertEquals("String type assertion", Cell.CELL_TYPE_STRING, CellUtil.getCellType("sample"));
-        Assert.assertNotEquals("String type assertion", Cell.CELL_TYPE_BLANK, CellUtil.getCellType("sample"));
-        Assert.assertNotEquals("String type assertion", Cell.CELL_TYPE_BOOLEAN, CellUtil.getCellType("sample"));
-    }
-
-    private void assertBooleanTypeChecking() {
-        Assert.assertEquals("Boolean cell type assertion", Cell.CELL_TYPE_BOOLEAN, CellUtil.getCellType(true));
-        Assert.assertNotEquals("Boolean cell type assertion", Cell.CELL_TYPE_BLANK, CellUtil.getCellType(true));
-        Assert.assertNotEquals("Boolean cell type assertion", Cell.CELL_TYPE_STRING, CellUtil.getCellType(true));
-    }
 }

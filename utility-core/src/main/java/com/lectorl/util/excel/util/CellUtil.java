@@ -140,26 +140,6 @@ public class CellUtil {
         return cell;
     }
 
-    @Deprecated
-    public static int getCellType(Object value) {
-        if (value instanceof Boolean) {
-            return Cell.CELL_TYPE_BOOLEAN;
-        } else if (value instanceof Integer) {
-            return Cell.CELL_TYPE_NUMERIC;
-        } else if (value instanceof Long) {
-            return Cell.CELL_TYPE_NUMERIC;
-        } else if (value instanceof Double) {
-            return Cell.CELL_TYPE_NUMERIC;
-        } else if (value instanceof FLOAD) {
-            return Cell.CELL_TYPE_NUMERIC;
-        } else if (value instanceof BigDecimal) {
-            return Cell.CELL_TYPE_NUMERIC;
-        } else if (value instanceof Date) {
-            return 0;
-        }
-        return Cell.CELL_TYPE_STRING;
-    }
-
     public static <T> T getCellValue(Row row, int position, Class<T> valueType) {
         final Cell cell = getCell(row, position);
         if (cell == null) return null;
