@@ -1,7 +1,6 @@
 package com.lectorl.util.excel.util;
 
 import com.lectorl.util.excel.exception.CellValueConvertException;
-import com.sun.org.apache.bcel.internal.generic.FLOAD;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.*;
 
@@ -11,6 +10,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
@@ -64,7 +64,7 @@ public class CellUtil {
         final Cell cell = row.createCell(column);
         cell.setCellType(Cell.CELL_TYPE_NUMERIC);
         cell.setCellStyle(cellStyle);
-        cell.setCellValue(new Double(value));
+        cell.setCellValue(value);
 
         return cell;
     }
@@ -76,7 +76,7 @@ public class CellUtil {
         if (value != null) {
             cell.setCellValue(value);
             cell.setCellType(Cell.CELL_TYPE_STRING);
-        } else{
+        } else {
             cell.setCellType(Cell.CELL_TYPE_BLANK);
         }
 
@@ -91,61 +91,49 @@ public class CellUtil {
         return createCellForString(workbook, row, column, value != null ? String.valueOf(value) : null);
     }
 
-    public static String getCellStringValue(Cell cell) {
-        if (cell == null) return null;
-        if (Cell.CELL_TYPE_BLANK == cell.getCellType()) return null;
-        return cell.getStringCellValue();
+    public static Optional<String> getCellStringValue(Cell cell) {
+        final Optional<Cell> cellOptional = Optional.ofNullable(cell);
+        return getCellStringValue(cellOptional);
     }
 
-    public static BigDecimal getCellDecimalValue(Row row, int column) {
-        final String cellStringValue = getCellStringValue(row, column);
-        if (cellStringValue == null) {
-            return null;
-        }
-        return new BigDecimal(cellStringValue);
+    public static Optional<Double> getCellDoubleValue(Row row, int column) {
+        final Optional<Cell> cellOptional = getCell(row, column);
+        return cellOptional.filter(e -> Cell.CELL_TYPE_NUMERIC == e.getCellType())
+                .map(e -> Optional.ofNullable(e.getNumericCellValue()))
+                .orElseThrow(() -> new CellValueConvertException("Cannot retrieve double from non-numeric cell with type."));
     }
 
-    public static LocalDate getCellLocalDateValue(Row row, int index) {
-        final Cell cell = getCell(row, index);
-        if (cell == null) {
-            return null;
-        }
-        final Date input = cell.getDateCellValue();
-        final Instant instant = input.toInstant();
-        final ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
-        return zdt.toLocalDate();
+    public static Optional<BigDecimal> getCellDecimalValue(Row row, int column) {
+        final Optional<String> cellStringValue = getCellStringValue(row, column);
+        return cellStringValue.map(BigDecimal::new);
     }
 
-    public static Date getCellDateValue(Row row, int index) {
-        final Cell cell = getCell(row, index);
-        if (cell == null) {
-            return null;
-        }
-        final int cellType = cell.getCellType();
-        if (Cell.CELL_TYPE_NUMERIC != cellType) {
-            throw new CellValueConvertException("Cannot retrieve date from non-numeric cell with type : " + cellType);
-        }
-        return cell.getDateCellValue();
+    public static Optional<LocalDate> getCellLocalDateValue(Row row, int index) {
+        final Optional<Cell> localDateOptional = getCell(row, index);
+        return localDateOptional
+                .flatMap(c -> Optional.ofNullable(c.getDateCellValue()))
+                .map(DateTimeUtil::toLocalDate);
     }
 
-    public static String getCellStringValue(Row row, int index) {
-        final Cell cell = getCell(row, index);
-        return CellUtil.getCellStringValue(cell);
+    public static Optional<Date> getCellDateValue(Row row, int index) {
+        final Optional<Cell> cellOptional = getCell(row, index);
+        return cellOptional.filter(e -> Cell.CELL_TYPE_NUMERIC == e.getCellType())
+                .map(e -> Optional.ofNullable(e.getDateCellValue()))
+                .orElseThrow(() -> new CellValueConvertException("Cannot retrieve date from non-numeric cell with type."));
     }
 
-    public static Cell getCell(Row row, int index) {
-        final Cell cell = row.getCell(index);
-        if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK)
-            return null;
-        return cell;
+    public static Optional<String> getCellStringValue(Row row, int index) {
+        final Optional<Cell> cell = getCell(row, index);
+        return getCellStringValue(cell);
     }
 
-    public static <T> T getCellValue(Row row, int position, Class<T> valueType) {
-        final Cell cell = getCell(row, position);
-        if (cell == null) return null;
-        if (Date.class.equals(valueType)) return valueType.cast(getCellDateValue(row, position));
-        if (LocalDate.class.equals(valueType)) return valueType.cast(getCellLocalDateValue(row, position));
-        else if (BigDecimal.class.equals(valueType)) return valueType.cast(getCellDecimalValue(row, position));
-        return valueType.cast(cell.getStringCellValue());
+    private static Optional<String> getCellStringValue(Optional<Cell> cell) {
+        return cell.filter(e -> e.getCellType() != Cell.CELL_TYPE_BLANK)
+                .map(Cell::getStringCellValue);
+    }
+
+    public static Optional<Cell> getCell(Row row, int index) {
+        final Optional<Cell> cellOptional = Optional.ofNullable(row.getCell(index));
+        return cellOptional.filter(e -> Cell.CELL_TYPE_BLANK != e.getCellType());
     }
 }

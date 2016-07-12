@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
@@ -32,8 +33,11 @@ public class ExcelDocumentCreatorTest {
 
     public static final String TEST_XLS = "test.xls";
 
+    private CellConverter cellConverter;
+
     @Before
     public void cleanTestFile() {
+        this.cellConverter = new CellConverter();
         final File outputFile = new File(TEST_XLS);
         if (outputFile.exists()) {
             outputFile.delete();
@@ -84,10 +88,9 @@ public class ExcelDocumentCreatorTest {
         assertCreatedCell(hssfRow, "PRIS", 3);
         assertCreatedCell(hssfRow, "PRIS", 3);
 
-        final String cellValue = CellUtil.getCellStringValue(hssfRow, 3);
-        Assert.assertNotEquals("pRIS", cellValue);
-        Assert.assertNotEquals("Pris", cellValue);
-
+        final Optional<String> cellValue = CellUtil.getCellStringValue(hssfRow, 3);
+        cellValue.ifPresent(c -> Assert.assertNotEquals("pRIS", c));
+        cellValue.ifPresent(c -> Assert.assertNotEquals("Pris", c));
 
     }
 
@@ -125,9 +128,9 @@ public class ExcelDocumentCreatorTest {
         final HSSFSheet sheet = getSheet(path);
         Assert.assertEquals("Same size", records.size(), sheet.getLastRowNum() - sheet.getFirstRowNum());
         int headerRowNumber = containHeader ? 1 : 0;
-        for (int rowIndex = 0 ; rowIndex < records.size(); rowIndex++) {
+        for (int rowIndex = 0; rowIndex < records.size(); rowIndex++) {
             final T record = records.get(rowIndex);
-            final HSSFRow row = sheet.getRow( rowIndex + headerRowNumber);
+            final HSSFRow row = sheet.getRow(rowIndex + headerRowNumber);
             T fromRow = configuration.fromRow(row, clazz);
             final List<ExcelField> fields = AnnotationUtil.getFields(clazz);
             for (ExcelField field : fields) {
@@ -135,7 +138,11 @@ public class ExcelDocumentCreatorTest {
                 final Class<?> propertyType = propertyDescriptor.getPropertyType();
                 final int position = field.getPosition();
                 final R propertyValue = AnnotationUtil.getPropertyValue(fromRow, propertyDescriptor);
-                Assert.assertEquals("Asserting record with retrieved value", propertyValue, CellUtil.getCellValue(row, position, propertyType));
+                if (propertyValue != null) {
+                    Assert.assertEquals("Asserting record with retrieved value", propertyValue, cellConverter.toJava(row, position, propertyType).get());
+                } else{
+                    Assert.assertEquals("Asserting record with retrieved value", false, cellConverter.toJava(row, position, propertyType).isPresent());
+                }
             }
         }
     }
@@ -151,9 +158,8 @@ public class ExcelDocumentCreatorTest {
     }
 
     private void assertCreatedCell(HSSFRow hssfRow, String title, int index) {
-        final String cellValue = CellUtil.getCellStringValue(hssfRow, index);
-        Assert.assertNotEquals(null, cellValue);
-        Assert.assertEquals(title, cellValue);
+        final Optional<String> cellValue = CellUtil.getCellStringValue(hssfRow, index);
+        cellValue.ifPresent(e -> Assert.assertEquals(title, e));
     }
 
     private void assertSheetName(String path, Class<?> clazz) throws IOException {

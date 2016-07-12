@@ -4,12 +4,12 @@ import com.lectorl.util.excel.exception.CellValueConvertException;
 import com.lectorl.util.excel.exception.ModelNotFoundException;
 import com.lectorl.util.excel.model.Book;
 import com.lectorl.util.excel.model.Person;
-import com.lectorl.util.excel.util.CellUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -26,6 +26,13 @@ import java.util.Date;
 public class ExcelManipulationConfigurationTest {
 
     public static final String TEST_XLS = "test.xls";
+
+    private CellConverter cellConverter;
+
+    @Before
+    public void setUp() throws Exception {
+        cellConverter = new CellConverter();
+    }
 
     @Test
     public void testCreatedRowIsEmpty() throws IOException {
@@ -52,13 +59,13 @@ public class ExcelManipulationConfigurationTest {
         final Row row = configuration.toRow(book, workbook, sheet, 0);
         Assert.assertNotEquals(null, row);
 
-        Assert.assertEquals("Title field equality", book.getTitle(), CellUtil.getCellValue(row, 1, String.class));
-        Assert.assertEquals("Title field equality", book.getAuthor(), CellUtil.getCellValue(row, 2, String.class));
-        Assert.assertEquals("Title field equality", book.getIsbn(), CellUtil.getCellValue(row, 9, String.class));
-        Assert.assertEquals("Title field equality", book.getLanguage(), CellUtil.getCellValue(row, 6, String.class));
-        Assert.assertEquals("Title field equality", book.getPrice(), CellUtil.getCellValue(row, 3, BigDecimal.class));
-        Assert.assertEquals("Title field equality", book.getReleaseDate(), CellUtil.getCellValue(row, 4, LocalDate.class));
-        Assert.assertEquals("Title field equality", null, CellUtil.getCellValue(row, 5, String.class));
+        Assert.assertEquals("Title is null", false, cellConverter.toJava(row, 1, String.class).isPresent());
+        Assert.assertEquals("Title field equality", book.getAuthor(), cellConverter.toJava(row, 2, String.class).get());
+        Assert.assertEquals("Title field equality", book.getIsbn(), cellConverter.toJava(row, 9, String.class).get());
+        Assert.assertEquals("Title field equality", book.getLanguage(), cellConverter.toJava(row, 6, String.class).get());
+        Assert.assertEquals("Title field equality", book.getPrice(), cellConverter.toJava(row, 3, BigDecimal.class).get());
+        Assert.assertEquals("Title field equality", book.getReleaseDate(), cellConverter.toJava(row, 4, LocalDate.class).get());
+        Assert.assertEquals("Title field equality", false, cellConverter.toJava(row, 5, String.class).isPresent());
     }
 
     @Test(expected = ModelNotFoundException.class)
@@ -90,7 +97,7 @@ public class ExcelManipulationConfigurationTest {
         Assert.assertNotEquals(null, row);
 
         Assert.assertNotEquals(null, row.getCell(1));
-        Assert.assertEquals(title, CellUtil.getCellValue(row, 1, String.class));
+        Assert.assertEquals(title, cellConverter.toJava(row, 1, String.class).get());
     }
 
     @Test
@@ -106,7 +113,7 @@ public class ExcelManipulationConfigurationTest {
         Assert.assertNotEquals(null, row);
 
         Assert.assertNotEquals(null, row.getCell(4));
-        Assert.assertEquals(now, CellUtil.getCellValue(row, 4, LocalDate.class));
+        Assert.assertEquals(now, cellConverter.toJava(row, 4, LocalDate.class).get());
     }
 
     @Test(expected = CellValueConvertException.class)
@@ -122,8 +129,8 @@ public class ExcelManipulationConfigurationTest {
         Assert.assertNotEquals(null, row);
 
         Assert.assertNotEquals(null, row.getCell(1));
-        Assert.assertEquals(title, CellUtil.getCellValue(row, 1, String.class));
-        Assert.assertNotEquals("Cell value", CellUtil.getCellValue(row, 1, Date.class));
+        Assert.assertEquals(title, cellConverter.toJava(row, 1, String.class).get());
+        Assert.assertNotEquals("Cell value", cellConverter.toJava(row, 1, Date.class));
     }
 
     private Book getSampleBook() {

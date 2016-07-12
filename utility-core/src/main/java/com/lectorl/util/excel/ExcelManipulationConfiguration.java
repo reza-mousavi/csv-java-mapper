@@ -7,6 +7,7 @@ import com.lectorl.util.excel.exception.ModelNotFoundException;
 import com.lectorl.util.excel.util.AnnotationUtil;
 import com.lectorl.util.excel.util.CellUtil;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -21,9 +22,11 @@ public class ExcelManipulationConfiguration {
 
     private static final Logger logger = Logger.getLogger(ExcelManipulationConfiguration.class.getName());
 
-    private Map<Class,ExcelDocument> excelDocuments;
+    private CellConverter cellConverter;
+    private Map<Class, ExcelDocument> excelDocuments;
 
     public ExcelManipulationConfiguration() {
+        this.cellConverter = new CellConverter();
         this.excelDocuments = new HashMap<>();
     }
 
@@ -42,35 +45,34 @@ public class ExcelManipulationConfiguration {
         return this;
     }
 
-    public <T> T fromRow(Row row, Class<T> clazz){
+    public <T> T fromRow(Row row, Class<T> clazz) {
         try {
             final T instance = clazz.newInstance();
             final ExcelDocument excelDocument = lookupForDocument(clazz);
             final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
             for (ExcelField excelField : fieldsStructure) {
-                final Object fieldValue = AnnotationUtil.extractValue(excelField, row);
-                logger.debug("Value for property is : " + fieldValue);
+                final Optional<Object> fieldValue = extractValue(excelField, row);
                 final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
                 logger.debug("Setting value for property : " + propertyDescriptor.getName());
-                AnnotationUtil.setPropertyValue(instance, fieldValue, propertyDescriptor);
+                fieldValue.ifPresent(e -> AnnotationUtil.setPropertyValue(instance, e, propertyDescriptor));
             }
             return instance;
-        } catch (InstantiationException|IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public <T> Row toHeaderRow(Class<T> clazz, Workbook workbook, Sheet sheet, int rowNumber){
+    public <T> Row toHeaderRow(Class<T> clazz, Workbook workbook, Sheet sheet, int rowNumber) {
         final Row header = sheet.createRow(rowNumber);
         final ExcelDocument excelDocument = lookupForDocument(clazz);
         final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
-        fieldsStructure.stream().map(e-> "\t\tMethod found for property : " + e.getPropertyDescriptor().getName()).forEach(logger::debug);
+        fieldsStructure.stream().map(e -> "\t\tMethod found for property : " + e.getPropertyDescriptor().getName()).forEach(logger::debug);
         fieldsStructure.stream().forEach(c -> CellUtil.createCellForString(workbook, header, c.getPosition(), c.getName()));
         return header;
     }
 
-    public <T> Row toRow(T record, Workbook workbook, Sheet sheet, int rowNumber){
+    public <T> Row toRow(T record, Workbook workbook, Sheet sheet, int rowNumber) {
         final Row row = sheet.createRow(rowNumber);
         final Class<?> clazz = record.getClass();
         final ExcelDocument excelDocument = lookupForDocument(clazz);
@@ -88,12 +90,18 @@ public class ExcelManipulationConfiguration {
     }
 
     private <T> ExcelDocument lookupForDocument(Class<T> clazz) {
-        final ExcelDocument excelDocument = excelDocuments.get(clazz);
-        if (excelDocument == null) {
-            throw new ModelNotFoundException("Cannot find any model for given class : " + clazz);
-        }
-        logger.debug("Excel document found for class : "  +clazz);
-        return excelDocument;
+        final Optional<ExcelDocument> document = Optional.ofNullable(excelDocuments.get(clazz));
+        document.ifPresent(e -> logger.debug("Excel document found for class : " + clazz));
+        return document.orElseThrow(() -> new ModelNotFoundException("Cannot find any model for given class : " + clazz));
     }
+
+    public <T> Optional<T> extractValue(ExcelField excelField, Row row) {
+        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
+        final Class<?> propertyType = propertyDescriptor.getPropertyType();
+        final int position = excelField.getPosition();
+        return cellConverter.toJava(row, position, (Class<T>) propertyType);
+    }
+
+
 
 }

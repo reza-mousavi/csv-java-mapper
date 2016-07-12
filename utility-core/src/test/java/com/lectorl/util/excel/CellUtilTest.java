@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -23,6 +24,14 @@ import java.util.Date;
  */
 @RunWith(JUnit4.class)
 public class CellUtilTest {
+
+    private CellConverter cellConverter;
+
+    @Before
+    public void setUp() throws Exception {
+        this.cellConverter = new CellConverter();
+
+    }
 
     @Test
     public void testDateCellCreation() {
@@ -122,7 +131,7 @@ public class CellUtilTest {
         Assert.assertEquals("Cell index", 0, cell.getColumnIndex());
         Assert.assertEquals("Cell type", cellTypeString, cell.getCellType());
         Assert.assertNotEquals(null, cell.getStringCellValue());
-        Assert.assertEquals("Cell value", value, CellUtil.getCellStringValue(cell));
+        Assert.assertEquals("Cell value", value, CellUtil.getCellStringValue(cell).orElse(null));
     }
 
     @Test
@@ -177,7 +186,7 @@ public class CellUtilTest {
         final HSSFWorkbook workbook = sheet.getWorkbook();
         final String fieldValue = "Reza";
         CellUtil.createCellForString(workbook, row, 0, fieldValue);
-        final String cellValue = CellUtil.getCellValue(row, 0, String.class);
+        final String cellValue = cellConverter.toJava(row, 0, String.class).get();
 
         Assert.assertNotEquals(null, cellValue);
         Assert.assertNotEquals(null, row.getCell(0));
@@ -192,7 +201,7 @@ public class CellUtilTest {
         final HSSFWorkbook workbook = sheet.getWorkbook();
         final LocalDate localDate = LocalDate.now();
         CellUtil.createCell(workbook, row, 0, localDate);
-        final LocalDate cellValue = CellUtil.getCellValue(row, 0, LocalDate.class);
+        final LocalDate cellValue =  cellConverter.toJava(row, 0, LocalDate.class).get();
 
         Assert.assertNotEquals(null, cellValue);
         Assert.assertNotEquals(null, row.getCell(0));
@@ -215,7 +224,7 @@ public class CellUtilTest {
         Assert.assertEquals("Cell row", 0, cell.getRowIndex());
         Assert.assertEquals("Cell index", 0, cell.getColumnIndex());
         Assert.assertEquals("Cell type", cellTypeString, cell.getCellType());
-        Assert.assertEquals(value, CellUtil.getCellStringValue(cell));
+        Assert.assertEquals(value, CellUtil.getCellStringValue(cell).orElse(null));
     }
 
     private Cell createStringCell(String value) {
