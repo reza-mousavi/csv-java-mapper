@@ -35,11 +35,8 @@ public class ExcelDataTypeOfLocalDate implements ExcelDataType<LocalDate> {
     @Override
     public Optional<LocalDate> toJava(Cell cell) {
         final Optional<Cell> cellOptional = Optional.ofNullable(cell);
-        final Row row = cell.getRow();
-        final int columnIndex = cell.getColumnIndex();
-        return cellOptional
-                .flatMap(e-> getCellLocalDateValue(row, columnIndex))
-                .map(LocalDate.class::cast);
+        final Optional<Row> rowOptional = cellOptional.map(c -> cell.getRow());
+        return rowOptional.flatMap(e -> getCellLocalDateValue(e, cell.getColumnIndex()));
     }
 
     public static Optional<LocalDate> getCellLocalDateValue(Row row, int index) {

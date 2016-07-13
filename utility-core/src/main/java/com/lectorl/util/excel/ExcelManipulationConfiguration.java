@@ -1,5 +1,6 @@
 package com.lectorl.util.excel;
 
+import com.lectorl.util.excel.datatype.ExcelDataTypeOfString;
 import com.lectorl.util.excel.document.ExcelDocument;
 import com.lectorl.util.excel.document.ExcelDocumentBuilder;
 import com.lectorl.util.excel.document.ExcelField;
@@ -24,10 +25,12 @@ public class ExcelManipulationConfiguration {
     private CellConverter cellConverter;
     private Map<Class, ExcelDocument> excelDocuments;
     private ImplementationType implementationType = HSSF;
+    private ExcelDataTypeOfString excelDataTypeOfString;
 
     public ExcelManipulationConfiguration() {
         this.cellConverter = new CellConverter();
         this.excelDocuments = new HashMap<>();
+        excelDataTypeOfString = new ExcelDataTypeOfString();
     }
 
     public ExcelManipulationConfiguration setImplementationType(ImplementationType implementationType) {
@@ -57,14 +60,11 @@ public class ExcelManipulationConfiguration {
     public <T> T fromRow(Row row, Class<T> clazz) {
         try {
             final T instance = clazz.newInstance();
-            final ExcelDocument excelDocument = lookupForDocument(clazz);
-            final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
-            for (ExcelField excelField : fieldsStructure) {
-                final Optional<Object> fieldValue = extractValue(excelField, row);
-                final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
-                logger.debug("Setting value for property : " + propertyDescriptor.getName());
-                fieldValue.ifPresent(e -> AnnotationUtil.setPropertyValue(instance, e, propertyDescriptor));
-            }
+            lookupForDocument(clazz)
+                    .getExcelFields()
+                    .stream()
+                    .peek(e -> logger.debug("Setting value for property : " + e.getPropertyDescriptor().getName()))
+                    .forEach(excelField -> fromColumnToJava(row, instance, excelField));
             return instance;
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
@@ -73,42 +73,42 @@ public class ExcelManipulationConfiguration {
     }
 
     public <T> Row toHeaderRow(Class<T> clazz, Sheet sheet) {
-        final Workbook workbook = sheet.getWorkbook();
         final Row header = RowUtil.createRow(sheet);
         final ExcelDocument excelDocument = lookupForDocument(clazz);
         final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
-        fieldsStructure.stream().map(e -> "\t\tMethod found for property : " + e.getPropertyDescriptor().getName()).forEach(logger::debug);
-        fieldsStructure.stream().forEach(c -> {
-            String value = c.getName();
-            final CellStyle cellStyle = workbook.createCellStyle();
-            final Cell cell = header.createCell(c.getPosition());
-            cell.setCellStyle(cellStyle);
-            if (value != null) {
-                cell.setCellValue(value);
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-            } else {
-                cell.setCellType(Cell.CELL_TYPE_BLANK);
-            }
-
-        });
+        fieldsStructure
+                .stream()
+                .peek(e -> logger.debug("\t\tMethod found for property : " + e.getPropertyDescriptor().getName()))
+                .forEach(c -> excelDataTypeOfString.fromJava(header, c.getPosition(), c.getName()));
         return header;
     }
 
     public <T> Row toRow(T record, Sheet sheet) {
         final Row row = RowUtil.createRow(sheet);
-        final Class<?> clazz = record.getClass();
-        final ExcelDocument excelDocument = lookupForDocument(clazz);
-        final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
-        for (ExcelField excelField : fieldsStructure) {
-            final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
-            final T value = AnnotationUtil.getPropertyValue(record, propertyDescriptor);
-            final int position = excelField.getPosition();
-            logger.debug("Value for property is : " + value);
-            if (value != null) {
-                cellConverter.fromJava(row, position, value);
-            }
-        }
+        Optional<T> recordOptional = Optional.ofNullable(record);
+        recordOptional
+                .map(e-> lookupForDocument(e.getClass()))
+                .orElse(ExcelDocument.EMPTY)
+                .getExcelFields()
+                .stream()
+                .forEach(e -> fromJavaToColumn(record, row, e));
         return row;
+    }
+
+    private <T> void fromColumnToJava(Row row, T instance, ExcelField excelField) {
+        final Optional<Object> fieldValue = extractValue(excelField, row);
+        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
+        fieldValue.ifPresent(e -> AnnotationUtil.setPropertyValue(instance, e, propertyDescriptor));
+    }
+
+    private <T> void fromJavaToColumn(T record, Row row, ExcelField excelField) {
+        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
+        final T value = AnnotationUtil.getPropertyValue(record, propertyDescriptor);
+        final int position = excelField.getPosition();
+        logger.debug("Value for property is : " + value);
+        if (value != null) {
+            cellConverter.fromJava(row, position, value);
+        }
     }
 
     private <T> ExcelDocument lookupForDocument(Class<T> clazz) {

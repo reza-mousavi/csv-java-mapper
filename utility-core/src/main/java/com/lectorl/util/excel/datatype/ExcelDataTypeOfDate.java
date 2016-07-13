@@ -33,11 +33,8 @@ public class ExcelDataTypeOfDate implements ExcelDataType<Date> {
     @Override
     public Optional<Date> toJava(Cell cell) {
         final Optional<Cell> cellOptional = Optional.ofNullable(cell);
-        final Row row = cell.getRow();
-        final int columnIndex = cell.getColumnIndex();
-        return cellOptional
-                .flatMap(e-> getCellDateValue(row, columnIndex))
-                .map(Date.class::cast);
+        final Optional<Row> rowOptional = cellOptional.map(c -> cell.getRow());
+        return rowOptional.flatMap(e -> getCellDateValue(e, cell.getColumnIndex()));
     }
 
     public static Optional<Date> getCellDateValue(Row row, int index) {

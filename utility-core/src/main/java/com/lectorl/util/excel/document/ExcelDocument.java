@@ -13,12 +13,15 @@ import java.util.TreeSet;
  */
 public class ExcelDocument {
 
+    public static ExcelDocument EMPTY = new ExcelDocument(null);
+
     private ExcelRow excelRow;
 
     private SortedSet<ExcelField> excelFields;
 
     public ExcelDocument(ExcelRow excelRow) {
         this.excelRow = excelRow;
+        this.excelFields = new TreeSet<>(Comparator.comparing(ExcelField::getPosition));
     }
 
     public ExcelRow getExcelRow() {
@@ -30,9 +33,7 @@ public class ExcelDocument {
     }
 
     public void addExcelFields(ExcelField excelField) {
-        if (this.excelFields == null) {
-            this.excelFields = new TreeSet<>(Comparator.comparing(ExcelField::getPosition));
-        }
         this.excelFields.add(excelField);
     }
+
 }

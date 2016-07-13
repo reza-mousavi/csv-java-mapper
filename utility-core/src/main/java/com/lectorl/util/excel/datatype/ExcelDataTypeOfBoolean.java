@@ -27,10 +27,9 @@ public class ExcelDataTypeOfBoolean implements ExcelDataType<Boolean> {
     @Override
     public Optional<Boolean> toJava(Cell cell) {
         final Optional<Cell> cellOptional = Optional.ofNullable(cell);
-        final Row row = cell.getRow();
-        final int columnIndex = cell.getColumnIndex();
-        return cellOptional
-                .flatMap(e-> CellUtil.getNotBlankCell(row, columnIndex))
+        final Optional<Row> rowOptional = cellOptional.map(c -> cell.getRow());
+        return rowOptional
+                .flatMap(e -> CellUtil.getNotBlankCell(e, cell.getColumnIndex()))
                 .map(Boolean.class::cast);
     }
 

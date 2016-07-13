@@ -29,11 +29,8 @@ public class ExcelDataTypeOfBigDecimal implements ExcelDataType<BigDecimal> {
     @Override
     public Optional<BigDecimal> toJava(Cell cell) {
         final Optional<Cell> cellOptional = Optional.ofNullable(cell);
-        final Row row = cell.getRow();
-        final int columnIndex = cell.getColumnIndex();
-        return cellOptional
-                .flatMap(e-> getCellDecimalValue(row, columnIndex))
-                .map(BigDecimal.class::cast);
+        final Optional<Row> rowOptional = cellOptional.map(c -> cell.getRow());
+        return rowOptional.flatMap(e -> getCellDecimalValue(e, cell.getColumnIndex()));
     }
 
     public static Optional<BigDecimal> getCellDecimalValue(Row row, int column) {

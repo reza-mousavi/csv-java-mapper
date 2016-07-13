@@ -70,6 +70,7 @@ public class ExcelDocumentWriterTest {
     @Test
     public void testCreateExcelColumns() throws IOException {
         testRowsExcelForModel(true, Book.class, getListOfBooks());
+        testRowsExcelForModel(true, Book.class, getListOfNullBooks());
         testRowsExcelForModel(true, Person.class, getListOfPersons());
     }
 
@@ -244,6 +245,13 @@ public class ExcelDocumentWriterTest {
         rows.add(book);
 
         return rows;
+    }
+
+    private List<Book> getListOfNullBooks() {
+        final List<Book> books = new ArrayList<>(getListOfBooks());
+        books.add(null);
+        return books;
+
     }
 
     private List<Person> getListOfPersons() {
