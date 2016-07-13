@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/6/2016
@@ -28,6 +29,11 @@ public class ExcelDocumentWriter {
 
     public ExcelDocumentWriter setConfiguration(ExcelManipulationConfiguration configuration) {
         this.configuration = configuration;
+        return this;
+    }
+
+    public ExcelDocumentWriter setConfiguration(Supplier<ExcelManipulationConfiguration> supplier) {
+        this.configuration = supplier.get();
         return this;
     }
 
