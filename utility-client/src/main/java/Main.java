@@ -1,6 +1,7 @@
 import com.lector.util.excel.Book;
 import com.lectorl.util.excel.ExcelDocumentWriter;
 import com.lectorl.util.excel.ExcelManipulationConfiguration;
+import com.lectorl.util.excel.ImplementationType;
 import com.lectorl.util.excel.util.ExcelManipulationModelScanner;
 import org.apache.log4j.Logger;
 
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.lectorl.util.excel.ImplementationType.XSSF;
+
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/5/2016
  */
@@ -25,7 +28,7 @@ public class Main {
     public static void main(String[] args) {
         final List<Book> listOfRecords = getListOfRecords();
 
-        final String outputPath = "C:\\users\\REM\\Desktop\\11.xls";
+        final String outputPath = "C:\\users\\REM\\Desktop\\11.xlsx";
         try {
             final File outputFile = new File(outputPath);
             if (!outputFile.exists()) {
@@ -34,7 +37,8 @@ public class Main {
             final FileOutputStream out = new FileOutputStream(outputFile);
             final Set<Class<?>> models = ExcelManipulationModelScanner.scan("com.lector");
             final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-            configuration.addModel(models);
+            configuration.addModel(models)
+                    .setImplementationType(XSSF);
             new ExcelDocumentWriter()
                     .setCreateHeader(true)
                     .setConfiguration(configuration)
