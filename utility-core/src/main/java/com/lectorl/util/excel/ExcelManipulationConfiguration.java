@@ -1,6 +1,5 @@
 package com.lectorl.util.excel;
 
-import com.lectorl.util.excel.datatype.ExcelDataTypeOfString;
 import com.lectorl.util.excel.document.ExcelDocument;
 import com.lectorl.util.excel.document.ExcelDocumentBuilder;
 import com.lectorl.util.excel.document.ExcelField;
@@ -8,10 +7,14 @@ import com.lectorl.util.excel.exception.ModelNotFoundException;
 import com.lectorl.util.excel.util.AnnotationUtil;
 import com.lectorl.util.excel.util.RowUtil;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.beans.PropertyDescriptor;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.lectorl.util.excel.ImplementationType.HSSF;
 
@@ -25,12 +28,10 @@ public class ExcelManipulationConfiguration {
     private CellConverter cellConverter;
     private Map<Class, ExcelDocument> excelDocuments;
     private ImplementationType implementationType = HSSF;
-    private ExcelDataTypeOfString excelDataTypeOfString;
 
     public ExcelManipulationConfiguration() {
         this.cellConverter = new CellConverter();
         this.excelDocuments = new HashMap<>();
-        excelDataTypeOfString = new ExcelDataTypeOfString();
     }
 
     public ExcelManipulationConfiguration setImplementationType(ImplementationType implementationType) {
@@ -79,7 +80,7 @@ public class ExcelManipulationConfiguration {
         fieldsStructure
                 .stream()
                 .peek(e -> logger.debug("\t\tMethod found for property : " + e.getPropertyDescriptor().getName()))
-                .forEach(c -> excelDataTypeOfString.fromJava(header, c.getPosition(), c.getName()));
+                .forEach(c -> cellConverter.fromJava(header, c.getPosition(), c.getName()));
         return header;
     }
 
