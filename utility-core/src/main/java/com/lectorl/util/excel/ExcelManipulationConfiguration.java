@@ -105,7 +105,7 @@ public class ExcelManipulationConfiguration {
         return document.orElseThrow(() -> new ModelNotFoundException("Cannot find any model for given class : " + clazz));
     }
 
-    public <T> Optional<T> extractValue(ExcelField excelField, Row row) {
+    private <T> Optional<T> extractValue(ExcelField excelField, Row row) {
         final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
         final Class<?> propertyType = propertyDescriptor.getPropertyType();
         final int position = excelField.getPosition();
