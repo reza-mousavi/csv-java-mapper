@@ -28,8 +28,7 @@ public class ExcelDataTypeOfString implements ExcelDataType<String> {
     public Optional<String> toJava(Cell cell) {
         final Optional<Cell> cellOptional = Optional.ofNullable(cell);
         return cellOptional
-                .flatMap(e-> CellUtil.getCellStringValue(cell))
-                .map(String.class::cast);
+                .flatMap(e-> CellUtil.getCellStringValue(cell));
     }
 
     @Override
