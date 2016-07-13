@@ -30,7 +30,7 @@ public class ExcelDataTypeOfBoolean implements ExcelDataType<Boolean> {
         final Row row = cell.getRow();
         final int columnIndex = cell.getColumnIndex();
         return cellOptional
-                .flatMap(e-> CellUtil.getCell(row, columnIndex))
+                .flatMap(e-> CellUtil.getNotBlankCell(row, columnIndex))
                 .map(Boolean.class::cast);
     }
 

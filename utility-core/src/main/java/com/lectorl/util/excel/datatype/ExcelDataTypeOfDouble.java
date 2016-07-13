@@ -41,7 +41,7 @@ public class ExcelDataTypeOfDouble implements ExcelDataType<Double> {
     }
 
     public static Optional<Double> getCellDoubleValue(Row row, int column) {
-        final Optional<Cell> cellOptional = CellUtil.getCell(row, column);
+        final Optional<Cell> cellOptional = CellUtil.getNotBlankCell(row, column);
         return cellOptional.filter(e -> Cell.CELL_TYPE_NUMERIC == e.getCellType())
                 .map(e -> Optional.ofNullable(e.getNumericCellValue()))
                 .orElseThrow(() -> new CellValueConvertException("Cannot retrieve double from non-numeric cell with type."));

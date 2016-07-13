@@ -43,7 +43,7 @@ public class ExcelDataTypeOfLocalDate implements ExcelDataType<LocalDate> {
     }
 
     public static Optional<LocalDate> getCellLocalDateValue(Row row, int index) {
-        final Optional<Cell> localDateOptional = CellUtil.getCell(row, index);
+        final Optional<Cell> localDateOptional = CellUtil.getNotBlankCell(row, index);
         return localDateOptional
                 .flatMap(c -> Optional.ofNullable(c.getDateCellValue()))
                 .map(DateTimeUtil::toLocalDate);

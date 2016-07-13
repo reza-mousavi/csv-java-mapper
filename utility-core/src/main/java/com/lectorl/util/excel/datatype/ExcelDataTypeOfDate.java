@@ -41,7 +41,7 @@ public class ExcelDataTypeOfDate implements ExcelDataType<Date> {
     }
 
     public static Optional<Date> getCellDateValue(Row row, int index) {
-        final Optional<Cell> cellOptional = CellUtil.getCell(row, index);
+        final Optional<Cell> cellOptional = CellUtil.getNotBlankCell(row, index);
         return cellOptional.filter(e -> Cell.CELL_TYPE_NUMERIC == e.getCellType())
                 .map(e -> Optional.ofNullable(e.getDateCellValue()))
                 .orElseThrow(() -> new CellValueConvertException("Cannot retrieve date from non-numeric cell with type."));
