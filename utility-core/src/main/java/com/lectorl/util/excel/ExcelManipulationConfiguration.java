@@ -5,6 +5,7 @@ import com.lectorl.util.excel.document.ExcelDocumentBuilder;
 import com.lectorl.util.excel.document.ExcelField;
 import com.lectorl.util.excel.exception.ModelNotFoundException;
 import com.lectorl.util.excel.util.AnnotationUtil;
+import com.lectorl.util.excel.util.RowUtil;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 
@@ -59,9 +60,9 @@ public class ExcelManipulationConfiguration {
         return null;
     }
 
-    public <T> Row toHeaderRow(Class<T> clazz, Sheet sheet, int rowNumber) {
+    public <T> Row toHeaderRow(Class<T> clazz, Sheet sheet) {
         final Workbook workbook = sheet.getWorkbook();
-        final Row header = sheet.createRow(rowNumber);
+        final Row header = RowUtil.createRow(sheet);
         final ExcelDocument excelDocument = lookupForDocument(clazz);
         final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
         fieldsStructure.stream().map(e -> "\t\tMethod found for property : " + e.getPropertyDescriptor().getName()).forEach(logger::debug);
@@ -81,8 +82,8 @@ public class ExcelManipulationConfiguration {
         return header;
     }
 
-    public <T> Row toRow(T record, Sheet sheet, int rowNumber) {
-        final Row row = sheet.createRow(rowNumber);
+    public <T> Row toRow(T record, Sheet sheet) {
+        final Row row = RowUtil.createRow(sheet);
         final Class<?> clazz = record.getClass();
         final ExcelDocument excelDocument = lookupForDocument(clazz);
         final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();

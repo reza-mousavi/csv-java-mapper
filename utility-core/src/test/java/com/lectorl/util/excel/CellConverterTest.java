@@ -1,6 +1,7 @@
 package com.lectorl.util.excel;
 
 import com.lectorl.util.excel.exception.UnknownCellTypeException;
+import com.lectorl.util.excel.util.RowUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -28,7 +29,7 @@ public class CellConverterTest {
     public void testNullStringValue() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final String value = null;
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -45,7 +46,7 @@ public class CellConverterTest {
     public void testNullBDecimalValue() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final BigDecimal value = null;
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -62,7 +63,7 @@ public class CellConverterTest {
     public void testUnknownTypeNullValue() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final BigInteger value = null;
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -79,7 +80,7 @@ public class CellConverterTest {
     public void testUnknownTypeNotNullValue() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final BigInteger value = new BigInteger("123456");
         final Cell cell = cellConverter.fromJava(header, 0, value);
 

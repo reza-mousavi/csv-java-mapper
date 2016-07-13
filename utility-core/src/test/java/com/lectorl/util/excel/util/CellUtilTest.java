@@ -1,13 +1,10 @@
-package com.lectorl.util.excel;
+package com.lectorl.util.excel.util;
 
-import com.lectorl.util.excel.util.CellUtil;
+import com.lectorl.util.excel.CellConverter;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +35,7 @@ public class CellUtilTest {
     public void testDateCellCreation() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row row = sheet.createRow(0);
+        final Row row = RowUtil.createRow(sheet);
         final Date date = new Date();
         final Cell cell = cellConverter.fromJava(row, 0, date);
 
@@ -56,7 +53,7 @@ public class CellUtilTest {
     public void testLocalDateCellCreation() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final LocalDate date = LocalDate.now();
         final Cell cell = cellConverter.fromJava(header, 0, date);
 
@@ -80,7 +77,7 @@ public class CellUtilTest {
     public void testBooleanCellCreation() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final Cell cell = cellConverter.fromJava(header, 0, true);
 
         Assert.assertNotEquals(null, cell);
@@ -97,7 +94,7 @@ public class CellUtilTest {
     public void testDoubleCellCreation() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final Double value = 1.2d;
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -121,7 +118,7 @@ public class CellUtilTest {
     private void testStringCellTypeWithValue(String value, int cellTypeString) {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final CellStyle cellStyle = ((Workbook) workbook).createCellStyle();
         final Cell cell1 = header.createCell(0);
         cell1.setCellStyle(cellStyle);
@@ -149,7 +146,7 @@ public class CellUtilTest {
     public void assetDecimalCellValue() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final BigDecimal value = new BigDecimal("123456787654");
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -168,7 +165,7 @@ public class CellUtilTest {
     public void assetDecimalCellNullValue() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final BigDecimal value = null;
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -192,12 +189,12 @@ public class CellUtilTest {
 
     @Test
     public void testGetCellStringValue(){
-        final HSSFRow row = getRow();
-        final HSSFSheet sheet = row.getSheet();
-        final HSSFWorkbook workbook = sheet.getWorkbook();
+        final Row row = getRow();
+        final Sheet sheet = row.getSheet();
+        final Workbook workbook = sheet.getWorkbook();
         final String fieldValue = "Reza";
-        final CellStyle cellStyle = ((Workbook) workbook).createCellStyle();
-        final Cell cell = ((Row) row).createCell(0);
+        final CellStyle cellStyle = (workbook).createCellStyle();
+        final Cell cell = row.createCell(0);
         cell.setCellStyle(cellStyle);
         if (fieldValue != null) {
             cell.setCellValue(fieldValue);
@@ -216,7 +213,7 @@ public class CellUtilTest {
 
     @Test
     public void testGetCellLocalDateValue(){
-        final HSSFRow row = getRow();
+        final Row row = getRow();
         final LocalDate localDate = LocalDate.now();
         cellConverter.fromJava(row, 0, localDate);
         final LocalDate cellValue =  cellConverter.toJava(row, 0, LocalDate.class).get();
@@ -228,10 +225,10 @@ public class CellUtilTest {
     }
 
 
-    private HSSFRow getRow() {
+    private Row getRow() {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet();
-        return sheet.createRow(0);
+        return RowUtil.createRow(sheet);
     }
 
 
@@ -248,7 +245,7 @@ public class CellUtilTest {
     private Cell createStringCell(String value) {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = sheet.createRow(0);
+        final Row header = RowUtil.createRow(sheet);
         final CellStyle cellStyle = ((Workbook) workbook).createCellStyle();
         final Cell cell = header.createCell(0);
         cell.setCellStyle(cellStyle);

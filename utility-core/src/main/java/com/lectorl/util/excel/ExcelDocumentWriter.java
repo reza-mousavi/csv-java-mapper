@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/6/2016
@@ -53,16 +54,14 @@ public class ExcelDocumentWriter {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet(sheetName);
 
-        int rowNumber = 0;
-        if (createHeader) {
-            configuration.toHeaderRow(clazz, sheet, rowNumber++);
-        }
-
-        for (T record : records) {
-            logger.debug("Converting to excel row : " + record);
-            configuration.toRow(record, sheet, rowNumber++);
-        }
         try {
+            if (createHeader) {
+                configuration.toHeaderRow(clazz, sheet);
+            }
+            records.stream()
+                    .peek(record -> logger.debug("Converting to excel row : " + record))
+                    .forEach(record -> configuration.toRow(record, sheet));
+
             workbook.write(writer);
         } catch (IOException e) {
             logger.error(e);
