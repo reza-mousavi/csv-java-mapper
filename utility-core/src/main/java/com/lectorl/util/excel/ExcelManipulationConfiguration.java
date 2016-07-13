@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.lectorl.util.excel.ImplementationType.HSSF;
-
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
  */
@@ -27,7 +25,7 @@ public class ExcelManipulationConfiguration {
 
     private CellConverter cellConverter;
     private Map<Class, ExcelDocument> excelDocuments;
-    private ImplementationType implementationType = HSSF;
+    private ImplementationType implementationType;
 
     public ExcelManipulationConfiguration() {
         this.cellConverter = new CellConverter();

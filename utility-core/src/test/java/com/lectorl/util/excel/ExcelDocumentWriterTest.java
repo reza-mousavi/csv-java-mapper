@@ -111,7 +111,8 @@ public class ExcelDocumentWriterTest {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(clazz);
-        final ArrayList<T> elements = new ArrayList<>();
+        configuration.setImplementationType(HSSF);
+        final List<T> elements = new ArrayList<>();
         new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
@@ -192,6 +193,7 @@ public class ExcelDocumentWriterTest {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(modelClass);
+        configuration.setImplementationType(HSSF);
         final ExcelDocumentWriter excelDocumentWriter = new ExcelDocumentWriter();
         excelDocumentWriter.setConfiguration(configuration)
                 .setCreateHeader(createHeader)
