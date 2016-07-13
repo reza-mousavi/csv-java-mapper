@@ -12,6 +12,8 @@ import org.apache.poi.ss.usermodel.*;
 import java.beans.PropertyDescriptor;
 import java.util.*;
 
+import static com.lectorl.util.excel.ImplementationType.HSSF;
+
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
  */
@@ -21,10 +23,20 @@ public class ExcelManipulationConfiguration {
 
     private CellConverter cellConverter;
     private Map<Class, ExcelDocument> excelDocuments;
+    private ImplementationType implementationType = HSSF;
 
     public ExcelManipulationConfiguration() {
         this.cellConverter = new CellConverter();
         this.excelDocuments = new HashMap<>();
+    }
+
+    public ExcelManipulationConfiguration setImplementationType(ImplementationType implementationType) {
+        this.implementationType = implementationType;
+        return this;
+    }
+
+    public ImplementationType getImplementationType() {
+        return implementationType;
     }
 
     public ExcelManipulationConfiguration addModel(Set<Class<?>> classes) {

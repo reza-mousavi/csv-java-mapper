@@ -1,6 +1,7 @@
 package com.lectorl.util.excel;
 
 import com.lectorl.util.excel.exception.ExcelDocumentCreationException;
+import com.lectorl.util.excel.exception.ExcelManipulationIOException;
 import com.lectorl.util.excel.model.Book;
 import com.lectorl.util.excel.model.Person;
 import org.junit.Assert;
@@ -25,9 +26,11 @@ import java.util.List;
 public class BlackBoxTest {
 
     public static final String TEST_XLS = "test.xls";
+    public static final String TEST_XLSX = "test.xlsx";
 
     @Before
     public void cleanTestFolder(){
+        deleteFile(TEST_XLSX);
         deleteFile(TEST_XLS);
     }
 
@@ -51,6 +54,71 @@ public class BlackBoxTest {
                 .create(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
+        final List<Book> books = new ExcelDocumentReader()
+                .setConfiguration(configuration)
+                .setInputStream(inputStream)
+                .read(Book.class);
+        assertElementsAreEqual(listOfRecords, books);
+    }
+
+    @Test(expected = ExcelManipulationIOException.class)
+    public void testWritingBooksIncompatibleImplementation() throws IOException, ExcelDocumentCreationException {
+        deleteFile(TEST_XLS);
+        final FileOutputStream out = new FileOutputStream(TEST_XLS);
+        final List<Book> listOfRecords = getListOfBooks();
+        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        configuration.addModel(Book.class);
+        configuration.setImplementationType(ImplementationType.XSSF);
+        new ExcelDocumentWriter()
+                .setConfiguration(configuration)
+                .setOutputStream(out)
+                .create(Book.class, listOfRecords);
+        out.close();
+        configuration.setImplementationType(ImplementationType.HSSF);
+        final FileInputStream inputStream = new FileInputStream(TEST_XLS);
+        final List<Book> books = new ExcelDocumentReader()
+                .setConfiguration(configuration)
+                .setInputStream(inputStream)
+                .read(Book.class);
+        assertElementsAreEqual(listOfRecords, books);
+    }
+
+    @Test(expected = ExcelManipulationIOException.class)
+    public void testWritingBooksIncompatibleImplementation2() throws IOException, ExcelDocumentCreationException {
+        deleteFile(TEST_XLS);
+        final FileOutputStream out = new FileOutputStream(TEST_XLS);
+        final List<Book> listOfRecords = getListOfBooks();
+        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        configuration.addModel(Book.class);
+        configuration.setImplementationType(ImplementationType.HSSF);
+        new ExcelDocumentWriter()
+                .setConfiguration(configuration)
+                .setOutputStream(out)
+                .create(Book.class, listOfRecords);
+        out.close();
+        final FileInputStream inputStream = new FileInputStream(TEST_XLS);
+        configuration.setImplementationType(ImplementationType.XSSF);
+        final List<Book> books = new ExcelDocumentReader()
+                .setConfiguration(configuration)
+                .setInputStream(inputStream)
+                .read(Book.class);
+        assertElementsAreEqual(listOfRecords, books);
+    }
+
+    @Test
+    public void testWritingXssfBooks() throws IOException, ExcelDocumentCreationException {
+        deleteFile(TEST_XLSX);
+        final FileOutputStream out = new FileOutputStream(TEST_XLSX);
+        final List<Book> listOfRecords = getListOfBooks();
+        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        configuration.addModel(Book.class);
+        configuration.setImplementationType(ImplementationType.XSSF);
+        new ExcelDocumentWriter()
+                .setConfiguration(configuration)
+                .setOutputStream(out)
+                .create(Book.class, listOfRecords);
+        out.close();
+        final FileInputStream inputStream = new FileInputStream(TEST_XLSX);
         final List<Book> books = new ExcelDocumentReader()
                 .setConfiguration(configuration)
                 .setInputStream(inputStream)

@@ -2,10 +2,10 @@ package com.lectorl.util.excel;
 
 import com.lectorl.util.excel.exception.UnknownCellTypeException;
 import com.lectorl.util.excel.util.RowUtil;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import com.lectorl.util.excel.util.SheetUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,9 +27,7 @@ public class CellConverterTest {
 
     @Test
     public void testNullStringValue() {
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = RowUtil.createRow(sheet);
+        final Row header = getSampleRow();
         final String value = null;
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -42,11 +40,14 @@ public class CellConverterTest {
         Assert.assertEquals("Cell type", Cell.CELL_TYPE_BLANK, cell.getCellType());
     }
 
+    private Row getSampleRow() {
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
+        return RowUtil.createRow(sheet);
+    }
+
     @Test
     public void testNullBDecimalValue() {
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = RowUtil.createRow(sheet);
+        final Row header = getSampleRow();
         final BigDecimal value = null;
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -61,9 +62,7 @@ public class CellConverterTest {
 
     @Test
     public void testUnknownTypeNullValue() {
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = RowUtil.createRow(sheet);
+        final Row header = getSampleRow();
         final BigInteger value = null;
         final Cell cell = cellConverter.fromJava(header, 0, value);
 
@@ -78,9 +77,7 @@ public class CellConverterTest {
 
     @Test(expected = UnknownCellTypeException.class)
     public void testUnknownTypeNotNullValue() {
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        final HSSFSheet sheet = workbook.createSheet("sample");
-        final Row header = RowUtil.createRow(sheet);
+        final Row header = getSampleRow();
         final BigInteger value = new BigInteger("123456");
         final Cell cell = cellConverter.fromJava(header, 0, value);
 

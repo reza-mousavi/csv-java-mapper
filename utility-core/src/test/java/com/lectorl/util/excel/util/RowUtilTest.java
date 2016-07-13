@@ -1,10 +1,11 @@
 package com.lectorl.util.excel.util;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static com.lectorl.util.excel.ImplementationType.HSSF;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/13/2016
@@ -13,8 +14,7 @@ public class RowUtilTest {
 
     @Test
     public void testCreateRowRowIndex() {
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        final HSSFSheet sheet = workbook.createSheet("sample");
+        final Sheet sheet = SheetUtil.createSheet(HSSF, "sample");
 
         Assert.assertEquals("Row number ", 0, sheet.getLastRowNum());
         Assert.assertEquals("Physical Row number ", 0, sheet.getPhysicalNumberOfRows());

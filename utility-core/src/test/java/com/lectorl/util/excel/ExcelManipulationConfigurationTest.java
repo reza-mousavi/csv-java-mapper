@@ -4,10 +4,16 @@ import com.lectorl.util.excel.exception.CellValueConvertException;
 import com.lectorl.util.excel.exception.ModelNotFoundException;
 import com.lectorl.util.excel.model.Book;
 import com.lectorl.util.excel.model.Person;
+import com.lectorl.util.excel.util.SheetUtil;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +45,7 @@ public class ExcelManipulationConfigurationTest {
         ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Book.class);
         final Book book = new Book();
-        final HSSFSheet sheet = getSheet();
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
         final Row row = configuration.toRow(book, sheet);
         Assert.assertNotEquals(null, row);
 
@@ -53,7 +59,7 @@ public class ExcelManipulationConfigurationTest {
         ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Book.class);
         final Book book = getSampleBook();
-        final HSSFSheet sheet = getSheet();
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
         final Row row = configuration.toRow(book, sheet);
         Assert.assertNotEquals(null, row);
 
@@ -69,16 +75,16 @@ public class ExcelManipulationConfigurationTest {
     @Test(expected = ModelNotFoundException.class)
     public void testEmptyModel() throws IOException {
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        final HSSFSheet sheet = getSheet();
-        final Row row = configuration.toRow(new Book(), sheet);
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
+        configuration.toRow(new Book(), sheet);
     }
 
     @Test(expected = ModelNotFoundException.class)
     public void testUnrelatedModel() throws IOException {
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Person.class);
-        final HSSFSheet sheet = getSheet();
-        final Row row = configuration.toRow(new Book(), sheet);
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
+        configuration.toRow(new Book(), sheet);
     }
     @Test
     public void testCreatedRowStringCellValue() throws IOException {
@@ -87,7 +93,7 @@ public class ExcelManipulationConfigurationTest {
         final Book book = new Book();
         final String title = "Reza";
         book.setTitle(title);
-        final HSSFSheet sheet = getSheet();
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
         final Row row = configuration.toRow(book, sheet);
         Assert.assertNotEquals(null, row);
 
@@ -102,7 +108,7 @@ public class ExcelManipulationConfigurationTest {
         final Book book = new Book();
         final LocalDate now = LocalDate.now();
         book.setReleaseDate(now);
-        final HSSFSheet sheet = getSheet();
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
         final Row row = configuration.toRow(book, sheet);
         Assert.assertNotEquals(null, row);
 
@@ -117,7 +123,7 @@ public class ExcelManipulationConfigurationTest {
         final Book book = new Book();
         final String title = "Reza";
         book.setTitle(title);
-        final HSSFSheet sheet = getSheet();
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
         final Row row = configuration.toRow(book, sheet);
         Assert.assertNotEquals(null, row);
 
@@ -138,9 +144,31 @@ public class ExcelManipulationConfigurationTest {
         return book;
     }
 
-    private HSSFSheet getSheet() throws IOException {
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        return workbook.createSheet();
+    @Test
+    public void testHssfRowModel() throws IOException {
+        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        configuration.addModel(Book.class);
+        final Book book = new Book();
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
+        final Row row = configuration.toRow(book, sheet);
+        Assert.assertNotEquals(null, row);
+        Assert.assertEquals("Row class", true, row instanceof HSSFRow);
+        Assert.assertEquals("Row class", true, row.getSheet() instanceof HSSFSheet);
+        Assert.assertEquals("Row class", true, row.getSheet().getWorkbook() instanceof HSSFWorkbook);
+    }
+
+    @Test
+    public void testXssfRowModel() throws IOException {
+        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        configuration.addModel(Book.class);
+        final Book book = new Book();
+        final Sheet sheet = SheetUtil.createSheet(ImplementationType.XSSF, "sample");
+        final Row row = configuration.toRow(book, sheet);
+        Assert.assertNotEquals(null, row);
+
+        Assert.assertEquals("Row class", true, row instanceof XSSFRow);
+        Assert.assertEquals("Row class", true, row.getSheet() instanceof XSSFSheet);
+        Assert.assertEquals("Row class", true, row.getSheet().getWorkbook() instanceof XSSFWorkbook);
     }
 
 }

@@ -2,14 +2,14 @@ package com.lectorl.util.excel;
 
 import com.lectorl.util.excel.annotation.Row;
 import com.lectorl.util.excel.exception.ExcelDocumentCreationException;
+import com.lectorl.util.excel.util.SheetUtil;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/6/2016
@@ -51,8 +51,8 @@ public class ExcelDocumentWriter {
             throw new ExcelDocumentCreationException("Cannot create excel for non model class : " + clazz.getName());
         }
         final String sheetName = annotation.name();
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        final HSSFSheet sheet = workbook.createSheet(sheetName);
+        final ImplementationType implementationType = configuration.getImplementationType();
+        final Sheet sheet = SheetUtil.createSheet(implementationType, sheetName);
 
         try {
             if (createHeader) {
@@ -62,6 +62,7 @@ public class ExcelDocumentWriter {
                     .peek(record -> logger.debug("Converting to excel row : " + record))
                     .forEach(record -> configuration.toRow(record, sheet));
 
+            final Workbook workbook = sheet.getWorkbook();
             workbook.write(writer);
         } catch (IOException e) {
             logger.error(e);

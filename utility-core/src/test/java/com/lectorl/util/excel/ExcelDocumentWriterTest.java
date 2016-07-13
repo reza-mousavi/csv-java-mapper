@@ -8,9 +8,8 @@ import com.lectorl.util.excel.model.NonModelPerson;
 import com.lectorl.util.excel.model.Person;
 import com.lectorl.util.excel.util.AnnotationUtil;
 import com.lectorl.util.excel.util.CellUtil;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import com.lectorl.util.excel.util.SheetUtil;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,12 +17,17 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.beans.PropertyDescriptor;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.lectorl.util.excel.ImplementationType.HSSF;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
@@ -81,14 +85,14 @@ public class ExcelDocumentWriterTest {
         final ExcelDocumentWriter documentCreator = createExcelFile(true, clazz, elements);
         assertCreatedFileHasContent(true, TEST_XLS, clazz, documentCreator.getConfiguration(), elements);
 
-        final HSSFSheet sheet = getSheet(TEST_XLS);
-        final HSSFRow hssfRow = sheet.getRow(0);
+        final Sheet sheet = getSheet(TEST_XLS);
+        final org.apache.poi.ss.usermodel.Row row = sheet.getRow(0);
 
-        assertCreatedCell(hssfRow, "title", 1);
-        assertCreatedCell(hssfRow, "PRIS", 3);
-        assertCreatedCell(hssfRow, "PRIS", 3);
+        assertCreatedCell(row, "title", 1);
+        assertCreatedCell(row, "PRIS", 3);
+        assertCreatedCell(row, "PRIS", 3);
 
-        final Optional<String> cellValue = CellUtil.getCellStringValue(hssfRow, 3);
+        final Optional<String> cellValue = CellUtil.getCellStringValue(row, 3);
         cellValue.ifPresent(c -> Assert.assertNotEquals("pRIS", c));
         cellValue.ifPresent(c -> Assert.assertNotEquals("Pris", c));
 
@@ -125,12 +129,12 @@ public class ExcelDocumentWriterTest {
     }
 
     private <T, R> void validateRecords(boolean containHeader, String path, Class<T> clazz, ExcelManipulationConfiguration configuration, List<T> records) throws IOException {
-        final HSSFSheet sheet = getSheet(path);
+        final Sheet sheet = getSheet(path);
         Assert.assertEquals("Same size", records.size(), sheet.getLastRowNum() - sheet.getFirstRowNum());
         int headerRowNumber = containHeader ? 1 : 0;
         for (int rowIndex = 0; rowIndex < records.size(); rowIndex++) {
             final T record = records.get(rowIndex);
-            final HSSFRow row = sheet.getRow(rowIndex + headerRowNumber);
+            final org.apache.poi.ss.usermodel.Row row = sheet.getRow(rowIndex + headerRowNumber);
             T fromRow = configuration.fromRow(row, clazz);
             final List<ExcelField> fields = AnnotationUtil.getFields(clazz);
             for (ExcelField field : fields) {
@@ -148,34 +152,33 @@ public class ExcelDocumentWriterTest {
     }
 
     private void assertFileHeader(String path, Class<?> clazz) throws IOException {
-        final HSSFSheet sheet = getSheet(path);
-        final HSSFRow hssfRow = sheet.getRow(0);
+        final Sheet sheet = getSheet(path);
+        final org.apache.poi.ss.usermodel.Row row = sheet.getRow(0);
 
         final List<ExcelField> excelFields = AnnotationUtil.getFields(clazz);
         for (ExcelField excelField : excelFields) {
-            assertCreatedCell(hssfRow, excelField.getName(), excelField.getPosition());
+            assertCreatedCell(row, excelField.getName(), excelField.getPosition());
         }
     }
 
-    private void assertCreatedCell(HSSFRow hssfRow, String title, int index) {
-        final Optional<String> cellValue = CellUtil.getCellStringValue(hssfRow, index);
+    private void assertCreatedCell(org.apache.poi.ss.usermodel.Row row, String title, int index) {
+        final Optional<String> cellValue = CellUtil.getCellStringValue(row, index);
         cellValue.ifPresent(e -> Assert.assertEquals(title, e));
     }
 
     private void assertSheetName(String path, Class<?> clazz) throws IOException {
         final Row annotation = clazz.getAnnotation(Row.class);
 
-        final HSSFSheet sheet = getSheet(path);
+        final Sheet sheet = getSheet(path);
 
         Assert.assertNotEquals(null, sheet);
         Assert.assertNotEquals(null, sheet.getSheetName());
         Assert.assertEquals("Sheet name assertion", annotation.name(), sheet.getSheetName());
     }
 
-    private HSSFSheet getSheet(String path) throws IOException {
+    private Sheet getSheet(String path) throws IOException {
         final FileInputStream fileInputStream = new FileInputStream(path);
-        final HSSFWorkbook workbook = new HSSFWorkbook(fileInputStream);
-        return workbook.getSheetAt(0);
+        return SheetUtil.getSheet(HSSF, fileInputStream, 0);
     }
 
     private void assertFileHasContent(String path) {
