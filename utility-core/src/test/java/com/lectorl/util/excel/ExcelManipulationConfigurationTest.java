@@ -41,7 +41,7 @@ public class ExcelManipulationConfigurationTest {
         final Book book = new Book();
         final HSSFSheet sheet = getSheet();
         final HSSFWorkbook workbook = sheet.getWorkbook();
-        final Row row = configuration.toRow(book, workbook, sheet, 0);
+        final Row row = configuration.toRow(book, sheet, 0);
         Assert.assertNotEquals(null, row);
 
         for (Cell cell : row) {
@@ -55,8 +55,7 @@ public class ExcelManipulationConfigurationTest {
         configuration.addModel(Book.class);
         final Book book = getSampleBook();
         final HSSFSheet sheet = getSheet();
-        final HSSFWorkbook workbook = sheet.getWorkbook();
-        final Row row = configuration.toRow(book, workbook, sheet, 0);
+        final Row row = configuration.toRow(book, sheet, 0);
         Assert.assertNotEquals(null, row);
 
         Assert.assertEquals("Title is null", false, cellConverter.toJava(row, 1, String.class).isPresent());
@@ -72,8 +71,7 @@ public class ExcelManipulationConfigurationTest {
     public void testEmptyModel() throws IOException {
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         final HSSFSheet sheet = getSheet();
-        final HSSFWorkbook workbook = sheet.getWorkbook();
-        final Row row = configuration.toRow(new Book(), workbook, sheet, 0);
+        final Row row = configuration.toRow(new Book(), sheet, 0);
     }
 
     @Test(expected = ModelNotFoundException.class)
@@ -81,8 +79,7 @@ public class ExcelManipulationConfigurationTest {
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Person.class);
         final HSSFSheet sheet = getSheet();
-        final HSSFWorkbook workbook = sheet.getWorkbook();
-        final Row row = configuration.toRow(new Book(), workbook, sheet, 0);
+        final Row row = configuration.toRow(new Book(), sheet, 0);
     }
     @Test
     public void testCreatedRowStringCellValue() throws IOException {
@@ -92,8 +89,7 @@ public class ExcelManipulationConfigurationTest {
         final String title = "Reza";
         book.setTitle(title);
         final HSSFSheet sheet = getSheet();
-        final HSSFWorkbook workbook = sheet.getWorkbook();
-        final Row row = configuration.toRow(book, workbook, sheet, 0);
+        final Row row = configuration.toRow(book, sheet, 0);
         Assert.assertNotEquals(null, row);
 
         Assert.assertNotEquals(null, row.getCell(1));
@@ -108,8 +104,7 @@ public class ExcelManipulationConfigurationTest {
         final LocalDate now = LocalDate.now();
         book.setReleaseDate(now);
         final HSSFSheet sheet = getSheet();
-        final HSSFWorkbook workbook = sheet.getWorkbook();
-        final Row row = configuration.toRow(book, workbook, sheet, 0);
+        final Row row = configuration.toRow(book, sheet, 0);
         Assert.assertNotEquals(null, row);
 
         Assert.assertNotEquals(null, row.getCell(4));
@@ -124,8 +119,7 @@ public class ExcelManipulationConfigurationTest {
         final String title = "Reza";
         book.setTitle(title);
         final HSSFSheet sheet = getSheet();
-        final HSSFWorkbook workbook = sheet.getWorkbook();
-        final Row row = configuration.toRow(book, workbook, sheet, 0);
+        final Row row = configuration.toRow(book, sheet, 0);
         Assert.assertNotEquals(null, row);
 
         Assert.assertNotEquals(null, row.getCell(1));

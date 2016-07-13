@@ -18,4 +18,10 @@ public class DateTimeUtil {
         return zdt.toLocalDate();
     }
 
+    public static Date toDate(LocalDate value) {
+        final ZonedDateTime zonedDateTime = value.atStartOfDay(ZoneId.systemDefault());
+        final Instant instant = zonedDateTime.toInstant();
+        return Date.from(instant);
+    }
+
 }

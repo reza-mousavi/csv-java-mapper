@@ -29,7 +29,7 @@ import java.util.Optional;
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
  */
 @RunWith(JUnit4.class)
-public class ExcelDocumentCreatorTest {
+public class ExcelDocumentWriterTest {
 
     public static final String TEST_XLS = "test.xls";
 
@@ -71,14 +71,14 @@ public class ExcelDocumentCreatorTest {
 
     private <T> void testRowsExcelForModel(boolean createHeader, Class<T> modelClass, List<T> listOfRecords) throws IOException {
         cleanTestFile();
-        final ExcelDocumentCreator documentCreator = createExcelFile(createHeader, modelClass, listOfRecords);
+        final ExcelDocumentWriter documentCreator = createExcelFile(createHeader, modelClass, listOfRecords);
         assertCreatedFileHasContent(createHeader, TEST_XLS, modelClass, documentCreator.getConfiguration(), listOfRecords);
     }
 
     private <T> void testHeaderExcelForBookModelManual(Class<T> clazz) throws IOException {
         cleanTestFile();
         final List<T> elements = new ArrayList<>();
-        final ExcelDocumentCreator documentCreator = createExcelFile(true, clazz, elements);
+        final ExcelDocumentWriter documentCreator = createExcelFile(true, clazz, elements);
         assertCreatedFileHasContent(true, TEST_XLS, clazz, documentCreator.getConfiguration(), elements);
 
         final HSSFSheet sheet = getSheet(TEST_XLS);
@@ -97,7 +97,7 @@ public class ExcelDocumentCreatorTest {
     private <T> void testHeaderExcelForModel(Class<T> clazz, boolean createHeader) throws IOException {
         cleanTestFile();
         final List<T> elements = new ArrayList<>();
-        final ExcelDocumentCreator documentCreator = createExcelFile(createHeader, clazz, elements);
+        final ExcelDocumentWriter documentCreator = createExcelFile(createHeader, clazz, elements);
         assertCreatedFileHasContent(createHeader, TEST_XLS, clazz, documentCreator.getConfiguration(), elements);
     }
 
@@ -107,7 +107,7 @@ public class ExcelDocumentCreatorTest {
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(clazz);
         final ArrayList<T> elements = new ArrayList<>();
-        new ExcelDocumentCreator()
+        new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .create(clazz, elements);
@@ -184,17 +184,17 @@ public class ExcelDocumentCreatorTest {
         Assert.assertNotEquals("File size not zero", 0L, result.length());
     }
 
-    private <T> ExcelDocumentCreator createExcelFile(boolean createHeader, Class<T> modelClass, List<T> listOfRecords) throws IOException {
+    private <T> ExcelDocumentWriter createExcelFile(boolean createHeader, Class<T> modelClass, List<T> listOfRecords) throws IOException {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(modelClass);
-        final ExcelDocumentCreator excelDocumentCreator = new ExcelDocumentCreator();
-        excelDocumentCreator.setConfiguration(configuration)
+        final ExcelDocumentWriter excelDocumentWriter = new ExcelDocumentWriter();
+        excelDocumentWriter.setConfiguration(configuration)
                 .setCreateHeader(createHeader)
                 .setOutputStream(out)
                 .create(modelClass, listOfRecords);
         out.close();
-        return excelDocumentCreator;
+        return excelDocumentWriter;
     }
 
     private List<Book> getListOfBooks() {

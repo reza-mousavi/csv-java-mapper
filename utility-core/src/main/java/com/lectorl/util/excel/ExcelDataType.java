@@ -1,6 +1,7 @@
 package com.lectorl.util.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Optional;
 
@@ -9,7 +10,7 @@ import java.util.Optional;
  */
 public interface ExcelDataType<T> {
 
-    void fromJava(T t, Cell cell);
+    Cell fromJava(Row row, int position, T value);
 
     Optional<T> toJava(Cell cell);
 

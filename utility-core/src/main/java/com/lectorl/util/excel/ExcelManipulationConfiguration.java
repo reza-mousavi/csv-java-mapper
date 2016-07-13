@@ -5,12 +5,8 @@ import com.lectorl.util.excel.document.ExcelDocumentBuilder;
 import com.lectorl.util.excel.document.ExcelField;
 import com.lectorl.util.excel.exception.ModelNotFoundException;
 import com.lectorl.util.excel.util.AnnotationUtil;
-import com.lectorl.util.excel.util.CellUtil;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 
 import java.beans.PropertyDescriptor;
 import java.util.*;
@@ -63,16 +59,29 @@ public class ExcelManipulationConfiguration {
         return null;
     }
 
-    public <T> Row toHeaderRow(Class<T> clazz, Workbook workbook, Sheet sheet, int rowNumber) {
+    public <T> Row toHeaderRow(Class<T> clazz, Sheet sheet, int rowNumber) {
+        final Workbook workbook = sheet.getWorkbook();
         final Row header = sheet.createRow(rowNumber);
         final ExcelDocument excelDocument = lookupForDocument(clazz);
         final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
         fieldsStructure.stream().map(e -> "\t\tMethod found for property : " + e.getPropertyDescriptor().getName()).forEach(logger::debug);
-        fieldsStructure.stream().forEach(c -> CellUtil.createCellForString(workbook, header, c.getPosition(), c.getName()));
+        fieldsStructure.stream().forEach(c -> {
+            String value = c.getName();
+            final CellStyle cellStyle = workbook.createCellStyle();
+            final Cell cell = header.createCell(c.getPosition());
+            cell.setCellStyle(cellStyle);
+            if (value != null) {
+                cell.setCellValue(value);
+                cell.setCellType(Cell.CELL_TYPE_STRING);
+            } else {
+                cell.setCellType(Cell.CELL_TYPE_BLANK);
+            }
+
+        });
         return header;
     }
 
-    public <T> Row toRow(T record, Workbook workbook, Sheet sheet, int rowNumber) {
+    public <T> Row toRow(T record, Sheet sheet, int rowNumber) {
         final Row row = sheet.createRow(rowNumber);
         final Class<?> clazz = record.getClass();
         final ExcelDocument excelDocument = lookupForDocument(clazz);
@@ -83,7 +92,7 @@ public class ExcelManipulationConfiguration {
             final int position = excelField.getPosition();
             logger.debug("Value for property is : " + value);
             if (value != null) {
-                CellUtil.createCell(workbook, row, position, value);
+                cellConverter.fromJava(row, position, value);
             }
         }
         return row;
@@ -101,7 +110,5 @@ public class ExcelManipulationConfiguration {
         final int position = excelField.getPosition();
         return cellConverter.toJava(row, position, (Class<T>) propertyType);
     }
-
-
 
 }

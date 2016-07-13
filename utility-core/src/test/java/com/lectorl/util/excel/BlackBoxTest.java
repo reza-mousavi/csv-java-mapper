@@ -45,7 +45,7 @@ public class BlackBoxTest {
         final List<Book> listOfRecords = getListOfBooks();
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Book.class);
-        new ExcelDocumentCreator()
+        new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .create(Book.class, listOfRecords);
@@ -66,7 +66,7 @@ public class BlackBoxTest {
         final List<Book> listOfBooks = getListOfBooks();
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Book.class);
-        new ExcelDocumentCreator()
+        new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .create(Book.class, listOfBooks);
@@ -86,7 +86,7 @@ public class BlackBoxTest {
         final List<Person> listOfRecords = getListOfPersons();
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration()
                 .addModel(Person.class);
-        new ExcelDocumentCreator()
+        new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .create(Person.class, listOfRecords);

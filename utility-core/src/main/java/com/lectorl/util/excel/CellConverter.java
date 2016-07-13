@@ -1,6 +1,7 @@
 package com.lectorl.util.excel;
 
 import com.lectorl.util.excel.datatype.*;
+import com.lectorl.util.excel.exception.UnknownCellTypeException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -26,6 +27,21 @@ public class CellConverter {
         excelDataTypeMap.put(Double.class, new ExcelDataTypeOfDouble());
         excelDataTypeMap.put(LocalDate.class, new ExcelDataTypeOfLocalDate());
         excelDataTypeMap.put(String.class, new ExcelDataTypeOfString());
+        excelDataTypeMap.put(Boolean.class, new ExcelDataTypeOfBoolean());
+        excelDataTypeMap.put(Blank.class, new ExcelDataTypeOfBlank());
+    }
+
+    public <T> Cell fromJava(Row row, int position, Object value) {
+        final Optional<Class<?>> valueOp = Optional
+                .ofNullable(value)
+                .map(Object::getClass);
+        final Class<?> clazz = valueOp.orElse(Blank.class);
+        final ExcelDataType excelDataType = excelDataTypeMap.get(clazz);
+        final Optional<ExcelDataType> dataTypeHandler = Optional.ofNullable(excelDataType);
+        return dataTypeHandler
+                .map(e -> e.fromJava(row, position, value))
+                .orElseThrow(() -> new UnknownCellTypeException("Cannot find any handler for given type"));
+
     }
 
     public <T> Optional<T> toJava(Row row, int position, Class<T> resultClass) {
@@ -34,5 +50,7 @@ public class CellConverter {
         final Optional<ExcelDataType> dataTypeHandler = Optional.of(excelDataType);
         return dataTypeHandler.map(e -> e.toJava(cell)).orElseThrow(() -> new RuntimeException("Cannot find any handler for given type"));
     }
+
+    //Handle null values plus handle unknown classes values ...
 
 }

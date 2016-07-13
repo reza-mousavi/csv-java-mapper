@@ -9,8 +9,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         CellUtilTest.class,
+        CellConverterTest.class,
         ExcelManipulationConfigurationTest.class,
-        ExcelDocumentCreatorTest.class,
+        ExcelDocumentWriterTest.class,
         BlackBoxTest.class,
 })
 public class MainTest {

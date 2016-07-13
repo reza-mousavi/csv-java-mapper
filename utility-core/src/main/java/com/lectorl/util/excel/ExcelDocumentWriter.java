@@ -13,9 +13,9 @@ import java.util.List;
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/6/2016
  */
-public class ExcelDocumentCreator {
+public class ExcelDocumentWriter {
 
-    private static final Logger logger = Logger.getLogger(ExcelDocumentCreator.class.getName());
+    private static final Logger logger = Logger.getLogger(ExcelDocumentWriter.class.getName());
 
     private boolean createHeader = true;
     private OutputStream outputStream;
@@ -25,17 +25,17 @@ public class ExcelDocumentCreator {
         return configuration;
     }
 
-    public ExcelDocumentCreator setConfiguration(ExcelManipulationConfiguration configuration) {
+    public ExcelDocumentWriter setConfiguration(ExcelManipulationConfiguration configuration) {
         this.configuration = configuration;
         return this;
     }
 
-    public ExcelDocumentCreator setCreateHeader(boolean createHeader) {
+    public ExcelDocumentWriter setCreateHeader(boolean createHeader) {
         this.createHeader = createHeader;
         return this;
     }
 
-    public ExcelDocumentCreator setOutputStream(OutputStream outputStream) {
+    public ExcelDocumentWriter setOutputStream(OutputStream outputStream) {
         this.outputStream = outputStream;
         return this;
     }
@@ -55,12 +55,12 @@ public class ExcelDocumentCreator {
 
         int rowNumber = 0;
         if (createHeader) {
-            configuration.toHeaderRow(clazz, workbook, sheet, rowNumber++);
+            configuration.toHeaderRow(clazz, sheet, rowNumber++);
         }
 
         for (T record : records) {
             logger.debug("Converting to excel row : " + record);
-            configuration.toRow(record, workbook, sheet, rowNumber++);
+            configuration.toRow(record, sheet, rowNumber++);
         }
         try {
             workbook.write(writer);

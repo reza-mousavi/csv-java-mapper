@@ -1,7 +1,8 @@
 import com.lector.util.excel.Book;
-import com.lectorl.util.excel.ExcelDocumentCreator;
+import com.lectorl.util.excel.ExcelDocumentWriter;
 import com.lectorl.util.excel.ExcelManipulationConfiguration;
 import com.lectorl.util.excel.util.ExcelManipulationModelScanner;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -17,8 +19,11 @@ import java.util.Set;
  */
 
 public class Main {
+
+    private static final Logger logger = Logger.getLogger(Main.class);
+
     public static void main(String[] args) {
-        getListOfRecords();
+        final List<Book> listOfRecords = getListOfRecords();
 
         final String outputPath = "C:\\users\\REM\\Desktop\\11.xls";
         try {
@@ -30,11 +35,11 @@ public class Main {
             final Set<Class<?>> models = ExcelManipulationModelScanner.scan("com.lector");
             final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
             configuration.addModel(models);
-            new ExcelDocumentCreator()
+            new ExcelDocumentWriter()
                     .setCreateHeader(true)
                     .setConfiguration(configuration)
                     .setOutputStream(out)
-                    .create(Book.class, getListOfRecords());
+                    .create(Book.class, listOfRecords);
             out.close();
         } catch (IOException e) {
             throw new RuntimeException("Cannot create excel result for file : " + outputPath, e);

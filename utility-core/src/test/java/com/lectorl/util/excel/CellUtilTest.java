@@ -5,7 +5,9 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +32,6 @@ public class CellUtilTest {
     @Before
     public void setUp() throws Exception {
         this.cellConverter = new CellConverter();
-
     }
 
     @Test
@@ -39,7 +40,7 @@ public class CellUtilTest {
         final HSSFSheet sheet = workbook.createSheet("sample");
         final Row row = sheet.createRow(0);
         final Date date = new Date();
-        final Cell cell = CellUtil.createCell(workbook, row, 0, date);
+        final Cell cell = cellConverter.fromJava(row, 0, date);
 
         Assert.assertNotEquals(null, cell);
         Assert.assertNotEquals(null, cell.getSheet());
@@ -57,7 +58,7 @@ public class CellUtilTest {
         final HSSFSheet sheet = workbook.createSheet("sample");
         final Row header = sheet.createRow(0);
         final LocalDate date = LocalDate.now();
-        final Cell cell = CellUtil.createCell(workbook, header, 0, date);
+        final Cell cell = cellConverter.fromJava(header, 0, date);
 
         Assert.assertNotEquals(null, cell);
         Assert.assertNotEquals(null, cell.getSheet());
@@ -80,7 +81,7 @@ public class CellUtilTest {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
         final Row header = sheet.createRow(0);
-        final Cell cell = CellUtil.createCell(workbook, header, 0, true);
+        final Cell cell = cellConverter.fromJava(header, 0, true);
 
         Assert.assertNotEquals(null, cell);
         Assert.assertNotEquals(null, cell.getSheet());
@@ -98,7 +99,7 @@ public class CellUtilTest {
         final HSSFSheet sheet = workbook.createSheet("sample");
         final Row header = sheet.createRow(0);
         final Double value = 1.2d;
-        final Cell cell = CellUtil.createCell(workbook, header, 0, value);
+        final Cell cell = cellConverter.fromJava(header, 0, value);
 
         Assert.assertNotEquals(null, cell);
         Assert.assertNotEquals(null, cell.getSheet());
@@ -121,7 +122,17 @@ public class CellUtilTest {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
         final Row header = sheet.createRow(0);
-        final Cell cell = CellUtil.createCellForString(workbook, header, 0, value);
+        final CellStyle cellStyle = ((Workbook) workbook).createCellStyle();
+        final Cell cell1 = header.createCell(0);
+        cell1.setCellStyle(cellStyle);
+        if (value != null) {
+            cell1.setCellValue(value);
+            cell1.setCellType(Cell.CELL_TYPE_STRING);
+        } else {
+            cell1.setCellType(Cell.CELL_TYPE_BLANK);
+        }
+
+        final Cell cell = cell1;
 
         Assert.assertNotEquals(null, cell);
         Assert.assertNotEquals(null, cell.getSheet());
@@ -140,7 +151,7 @@ public class CellUtilTest {
         final HSSFSheet sheet = workbook.createSheet("sample");
         final Row header = sheet.createRow(0);
         final BigDecimal value = new BigDecimal("123456787654");
-        final Cell cell = CellUtil.createCell(workbook, header, 0, value);
+        final Cell cell = cellConverter.fromJava(header, 0, value);
 
         Assert.assertNotEquals(null, cell);
         Assert.assertNotEquals(null, cell.getSheet());
@@ -159,7 +170,7 @@ public class CellUtilTest {
         final HSSFSheet sheet = workbook.createSheet("sample");
         final Row header = sheet.createRow(0);
         final BigDecimal value = null;
-        final Cell cell = CellUtil.createCell(workbook, header, 0, value);
+        final Cell cell = cellConverter.fromJava(header, 0, value);
 
         Assert.assertNotEquals(null, cell);
         Assert.assertNotEquals(null, cell.getSheet());
@@ -185,7 +196,16 @@ public class CellUtilTest {
         final HSSFSheet sheet = row.getSheet();
         final HSSFWorkbook workbook = sheet.getWorkbook();
         final String fieldValue = "Reza";
-        CellUtil.createCellForString(workbook, row, 0, fieldValue);
+        final CellStyle cellStyle = ((Workbook) workbook).createCellStyle();
+        final Cell cell = ((Row) row).createCell(0);
+        cell.setCellStyle(cellStyle);
+        if (fieldValue != null) {
+            cell.setCellValue(fieldValue);
+            cell.setCellType(Cell.CELL_TYPE_STRING);
+        } else {
+            cell.setCellType(Cell.CELL_TYPE_BLANK);
+        }
+
         final String cellValue = cellConverter.toJava(row, 0, String.class).get();
 
         Assert.assertNotEquals(null, cellValue);
@@ -197,10 +217,8 @@ public class CellUtilTest {
     @Test
     public void testGetCellLocalDateValue(){
         final HSSFRow row = getRow();
-        final HSSFSheet sheet = row.getSheet();
-        final HSSFWorkbook workbook = sheet.getWorkbook();
         final LocalDate localDate = LocalDate.now();
-        CellUtil.createCell(workbook, row, 0, localDate);
+        cellConverter.fromJava(row, 0, localDate);
         final LocalDate cellValue =  cellConverter.toJava(row, 0, LocalDate.class).get();
 
         Assert.assertNotEquals(null, cellValue);
@@ -231,7 +249,17 @@ public class CellUtilTest {
         final HSSFWorkbook workbook = new HSSFWorkbook();
         final HSSFSheet sheet = workbook.createSheet("sample");
         final Row header = sheet.createRow(0);
-        return CellUtil.createCellForString(workbook, header, 0, value);
+        final CellStyle cellStyle = ((Workbook) workbook).createCellStyle();
+        final Cell cell = header.createCell(0);
+        cell.setCellStyle(cellStyle);
+        if (value != null) {
+            cell.setCellValue(value);
+            cell.setCellType(Cell.CELL_TYPE_STRING);
+        } else {
+            cell.setCellType(Cell.CELL_TYPE_BLANK);
+        }
+
+        return cell;
     }
 
 }

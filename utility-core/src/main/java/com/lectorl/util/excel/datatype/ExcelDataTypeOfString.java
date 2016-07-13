@@ -2,7 +2,7 @@ package com.lectorl.util.excel.datatype;
 
 import com.lectorl.util.excel.ExcelDataType;
 import com.lectorl.util.excel.util.CellUtil;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.*;
 
 import java.util.Optional;
 
@@ -12,7 +12,16 @@ import java.util.Optional;
 public class ExcelDataTypeOfString implements ExcelDataType<String> {
 
     @Override
-    public void fromJava(String value, Cell cell) {
+    public Cell fromJava(Row row, int column, String value) {
+        final Sheet sheet = row.getSheet();
+        final Workbook workbook = sheet.getWorkbook();
+        final CellStyle cellStyle = workbook.createCellStyle();
+        final Cell cell = row.createCell(column);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue(value);
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+
+        return cell;
     }
 
     @Override
