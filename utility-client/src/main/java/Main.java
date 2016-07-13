@@ -35,19 +35,23 @@ public class Main {
                 outputFile.createNewFile();
             }
             final FileOutputStream out = new FileOutputStream(outputFile);
-            final Set<Class<?>> models = ExcelManipulationModelScanner.scan("com.lector");
-            final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-            configuration.addModel(models)
-                    .setImplementationType(XSSF);
             new ExcelDocumentWriter()
                     .setCreateHeader(true)
-                    .setConfiguration(configuration)
+                    .setConfiguration(Main::createConfiguration)
                     .setOutputStream(out)
                     .create(Book.class, listOfRecords);
             out.close();
         } catch (IOException e) {
             throw new RuntimeException("Cannot create excel result for file : " + outputPath, e);
         }
+    }
+
+    private static ExcelManipulationConfiguration createConfiguration() {
+        final Set<Class<?>> models = ExcelManipulationModelScanner.scan("com.lector");
+        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        configuration.addModel(models)
+                .setImplementationType(XSSF);
+        return configuration;
     }
 
     private static List<Book> getListOfRecords() {
