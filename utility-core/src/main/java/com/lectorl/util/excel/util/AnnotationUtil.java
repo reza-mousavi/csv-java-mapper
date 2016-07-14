@@ -44,6 +44,7 @@ public class AnnotationUtil {
     }
 
     public static <T, R> R getPropertyValue(T instance, PropertyDescriptor propertyDescriptor) {
+        if (instance == null) return null;
         final Method readMethod = propertyDescriptor.getReadMethod();
         return (R) ReflectionUtils.invokeMethod(readMethod, instance);
     }

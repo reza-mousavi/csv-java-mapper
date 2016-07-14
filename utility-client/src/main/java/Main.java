@@ -1,7 +1,6 @@
 import com.lector.util.excel.Book;
 import com.lectorl.util.excel.ExcelDocumentWriter;
 import com.lectorl.util.excel.ExcelManipulationConfiguration;
-import com.lectorl.util.excel.ImplementationType;
 import com.lectorl.util.excel.util.ExcelManipulationModelScanner;
 import org.apache.log4j.Logger;
 
@@ -12,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.lectorl.util.excel.ImplementationType.XSSF;
@@ -39,7 +37,7 @@ public class Main {
                     .setCreateHeader(true)
                     .setConfiguration(Main::createConfiguration)
                     .setOutputStream(out)
-                    .create(Book.class, listOfRecords);
+                    .write(Book.class, listOfRecords);
             out.close();
         } catch (IOException e) {
             throw new RuntimeException("Cannot create excel result for file : " + outputPath, e);

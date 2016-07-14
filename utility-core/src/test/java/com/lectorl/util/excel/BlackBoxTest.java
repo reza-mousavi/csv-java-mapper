@@ -29,7 +29,7 @@ public class BlackBoxTest {
     public static final String TEST_XLSX = "test.xlsx";
 
     @Before
-    public void cleanTestFolder(){
+    public void cleanTestFolder() {
         deleteFile(TEST_XLSX);
         deleteFile(TEST_XLS);
     }
@@ -48,10 +48,11 @@ public class BlackBoxTest {
         final List<Book> listOfRecords = getListOfBooks();
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Book.class);
+        configuration.setImplementationType(ImplementationType.HSSF);
         new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
-                .create(Book.class, listOfRecords);
+                .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
         final List<Book> books = new ExcelDocumentReader()
@@ -72,7 +73,7 @@ public class BlackBoxTest {
         new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
-                .create(Book.class, listOfRecords);
+                .write(Book.class, listOfRecords);
         out.close();
         configuration.setImplementationType(ImplementationType.HSSF);
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
@@ -94,7 +95,7 @@ public class BlackBoxTest {
         new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
-                .create(Book.class, listOfRecords);
+                .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
         configuration.setImplementationType(ImplementationType.XSSF);
@@ -116,7 +117,7 @@ public class BlackBoxTest {
         new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
-                .create(Book.class, listOfRecords);
+                .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLSX);
         final List<Book> books = new ExcelDocumentReader()
@@ -134,10 +135,11 @@ public class BlackBoxTest {
         final List<Book> listOfBooks = getListOfBooks();
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Book.class);
+        configuration.setImplementationType(ImplementationType.HSSF);
         new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
-                .create(Book.class, listOfBooks);
+                .write(Book.class, listOfBooks);
         final FileInputStream inputStream = new FileInputStream(fileName);
         final List<Book> books = new ExcelDocumentReader()
                 .setConfiguration(configuration)
@@ -153,11 +155,12 @@ public class BlackBoxTest {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Person> listOfRecords = getListOfPersons();
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration()
-                .addModel(Person.class);
+                .addModel(Person.class)
+                .setImplementationType(ImplementationType.HSSF);
         new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
-                .create(Person.class, listOfRecords);
+                .write(Person.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
         final List<Person> persons = new ExcelDocumentReader()
@@ -169,10 +172,10 @@ public class BlackBoxTest {
 
     private <E> void assertElementsAreEqual(List<E> listOfRecords, List<E> books) {
         Assert.assertNotEquals(null, books);
-        Assert.assertEquals("Size is not equal", listOfRecords.size(),books.size());
+        Assert.assertEquals("Size is not equal", listOfRecords.size(), books.size());
     }
 
-    private List<Book> getListOfBooks(){
+    private List<Book> getListOfBooks() {
         final List<Book> rows = new ArrayList<>();
         Book book = new Book();
         book.setAuthor("Reza Mousavi");
@@ -218,7 +221,7 @@ public class BlackBoxTest {
         return rows;
     }
 
-    private List<Person> getListOfPersons(){
+    private List<Person> getListOfPersons() {
         final List<Person> rows = new ArrayList<>();
         rows.add(new Person("Reza", "Mousavi"));
         rows.add(new Person("Mona", "Yazdan"));

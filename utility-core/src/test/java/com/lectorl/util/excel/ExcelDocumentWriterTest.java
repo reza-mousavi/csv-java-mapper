@@ -70,8 +70,8 @@ public class ExcelDocumentWriterTest {
     @Test
     public void testCreateExcelColumns() throws IOException {
         testRowsExcelForModel(true, Book.class, getListOfBooks());
-        testRowsExcelForModel(true, Book.class, getListOfNullBooks());
         testRowsExcelForModel(true, Person.class, getListOfPersons());
+        testRowsExcelForModel(true, Book.class, getListOfNullBooks());
     }
 
     private <T> void testRowsExcelForModel(boolean createHeader, Class<T> modelClass, List<T> listOfRecords) throws IOException {
@@ -116,7 +116,7 @@ public class ExcelDocumentWriterTest {
         new ExcelDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
-                .create(clazz, elements);
+                .write(clazz, elements);
         out.close();
         assertCreatedFileHasContent(true, TEST_XLS, clazz, configuration, elements);
     }
@@ -137,13 +137,12 @@ public class ExcelDocumentWriterTest {
         for (int rowIndex = 0; rowIndex < records.size(); rowIndex++) {
             final T record = records.get(rowIndex);
             final org.apache.poi.ss.usermodel.Row row = sheet.getRow(rowIndex + headerRowNumber);
-            T fromRow = configuration.fromRow(row, clazz);
             final List<ExcelField> fields = AnnotationUtil.getFields(clazz);
             for (ExcelField field : fields) {
                 final PropertyDescriptor propertyDescriptor = field.getPropertyDescriptor();
                 final Class<?> propertyType = propertyDescriptor.getPropertyType();
                 final int position = field.getPosition();
-                final R propertyValue = AnnotationUtil.getPropertyValue(fromRow, propertyDescriptor);
+                final R propertyValue = AnnotationUtil.getPropertyValue(record, propertyDescriptor);
                 if (propertyValue != null) {
                     Assert.assertEquals("Asserting record with retrieved value", propertyValue, cellConverter.toJava(row, position, propertyType).get());
                 } else{
@@ -198,7 +197,7 @@ public class ExcelDocumentWriterTest {
         excelDocumentWriter.setConfiguration(configuration)
                 .setCreateHeader(createHeader)
                 .setOutputStream(out)
-                .create(modelClass, listOfRecords);
+                .write(modelClass, listOfRecords);
         out.close();
         return excelDocumentWriter;
     }

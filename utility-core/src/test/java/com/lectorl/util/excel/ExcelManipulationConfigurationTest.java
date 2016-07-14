@@ -31,144 +31,17 @@ import java.util.Date;
 @RunWith(JUnit4.class)
 public class ExcelManipulationConfigurationTest {
 
-    public static final String TEST_XLS = "test.xls";
-
-    private CellConverter cellConverter;
-
-    @Before
-    public void setUp() throws Exception {
-        cellConverter = new CellConverter();
-    }
-
-    @Test
-    public void testCreatedRowIsEmpty() throws IOException {
-        ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        configuration.addModel(Book.class);
-        final Book book = new Book();
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
-        final Row row = configuration.toRow(book, sheet);
-        Assert.assertNotEquals(null, row);
-
-        for (Cell cell : row) {
-            Assert.assertEquals(null, cell);
-        }
-    }
-
-    @Test
-    public void testCreatedRowIsNotEmpty() throws IOException {
-        ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        configuration.addModel(Book.class);
-        final Book book = getSampleBook();
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
-        final Row row = configuration.toRow(book, sheet);
-        Assert.assertNotEquals(null, row);
-
-        Assert.assertEquals("Title is null", false, cellConverter.toJava(row, 1, String.class).isPresent());
-        Assert.assertEquals("Title field equality", book.getAuthor(), cellConverter.toJava(row, 2, String.class).get());
-        Assert.assertEquals("Title field equality", book.getIsbn(), cellConverter.toJava(row, 9, String.class).get());
-        Assert.assertEquals("Title field equality", book.getLanguage(), cellConverter.toJava(row, 6, String.class).get());
-        Assert.assertEquals("Title field equality", book.getPrice(), cellConverter.toJava(row, 3, BigDecimal.class).get());
-        Assert.assertEquals("Title field equality", book.getReleaseDate(), cellConverter.toJava(row, 4, LocalDate.class).get());
-        Assert.assertEquals("Title field equality", false, cellConverter.toJava(row, 5, String.class).isPresent());
-    }
-
     @Test(expected = ModelNotFoundException.class)
     public void testEmptyModel() throws IOException {
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
-        configuration.toRow(new Book(), sheet);
+        configuration.lookupForDocument(Book.class);
     }
 
     @Test(expected = ModelNotFoundException.class)
     public void testUnrelatedModel() throws IOException {
         final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
         configuration.addModel(Person.class);
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
-        configuration.toRow(new Book(), sheet);
-    }
-    @Test
-    public void testCreatedRowStringCellValue() throws IOException {
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        configuration.addModel(Book.class);
-        final Book book = new Book();
-        final String title = "Reza";
-        book.setTitle(title);
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
-        final Row row = configuration.toRow(book, sheet);
-        Assert.assertNotEquals(null, row);
-
-        Assert.assertNotEquals(null, row.getCell(1));
-        Assert.assertEquals(title, cellConverter.toJava(row, 1, String.class).get());
-    }
-
-    @Test
-    public void testCreatedRowLocalDateCellValue() throws IOException {
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        configuration.addModel(Book.class);
-        final Book book = new Book();
-        final LocalDate now = LocalDate.now();
-        book.setReleaseDate(now);
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
-        final Row row = configuration.toRow(book, sheet);
-        Assert.assertNotEquals(null, row);
-
-        Assert.assertNotEquals(null, row.getCell(4));
-        Assert.assertEquals(now, cellConverter.toJava(row, 4, LocalDate.class).get());
-    }
-
-    @Test(expected = CellValueConvertException.class)
-    public void testCreatedRowStringIncompatibleCellValue() throws IOException {
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        configuration.addModel(Book.class);
-        final Book book = new Book();
-        final String title = "Reza";
-        book.setTitle(title);
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
-        final Row row = configuration.toRow(book, sheet);
-        Assert.assertNotEquals(null, row);
-
-        Assert.assertNotEquals(null, row.getCell(1));
-        Assert.assertEquals(title, cellConverter.toJava(row, 1, String.class).get());
-        Assert.assertNotEquals("Cell value", cellConverter.toJava(row, 1, Date.class));
-    }
-
-    private Book getSampleBook() {
-        Book book = new Book();
-        book.setAuthor("Reza Mousavi");
-        book.setIsbn("1235432");
-        book.setLanguage("Persian");
-        book.setPrice(new BigDecimal(12.5));
-        book.setPublisher("Cambridge");
-        book.setReleaseDate(LocalDate.now());
-        //book.setTitle("A guide for java lovers");
-        return book;
-    }
-
-    @Test
-    public void testHssfRowModel() throws IOException {
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        configuration.addModel(Book.class);
-        final Book book = new Book();
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.HSSF, "sample");
-        final Row row = configuration.toRow(book, sheet);
-        Assert.assertNotEquals(null, row);
-        Assert.assertEquals("Row class", true, row instanceof HSSFRow);
-        Assert.assertEquals("Row class", true, row.getSheet() instanceof HSSFSheet);
-        Assert.assertEquals("Row class", true, row.getSheet().getWorkbook() instanceof HSSFWorkbook);
-    }
-
-    @Test
-    public void testXssfRowModel() throws IOException {
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
-        configuration.addModel(Book.class);
-        final Book book = new Book();
-        final Sheet sheet = SheetUtil.createSheet(ImplementationType.XSSF, "sample");
-        final Row row = configuration.toRow(book, sheet);
-        Assert.assertNotEquals(null, row);
-
-        Assert.assertEquals("Row class", true, row instanceof XSSFRow);
-        Assert.assertEquals("Row class", true, row.getSheet() instanceof XSSFSheet);
-        Assert.assertEquals("Row class", true, row.getSheet().getWorkbook() instanceof XSSFWorkbook);
+        configuration.lookupForDocument(Book.class);
     }
 
 }
