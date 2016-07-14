@@ -3,6 +3,7 @@ package com.lectorl.util.excel;
 import com.lectorl.util.excel.annotation.Row;
 import com.lectorl.util.excel.document.ExcelField;
 import com.lectorl.util.excel.exception.NoModelException;
+import com.lectorl.util.excel.manipulator.CellConverter;
 import com.lectorl.util.excel.model.Book;
 import com.lectorl.util.excel.model.NonModelPerson;
 import com.lectorl.util.excel.model.Person;

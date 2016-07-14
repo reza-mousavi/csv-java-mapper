@@ -1,7 +1,7 @@
 package com.lectorl.util.excel.datatype;
 
-import com.lectorl.util.excel.Blank;
-import com.lectorl.util.excel.ExcelDataType;
+import com.lectorl.util.excel.manipulator.Blank;
+import com.lectorl.util.excel.manipulator.ExcelDataType;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 

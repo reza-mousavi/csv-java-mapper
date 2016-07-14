@@ -52,7 +52,7 @@ public class ExcelManipulationConfiguration {
         return this;
     }
 
-    public <T> ExcelDocument lookupForDocument(Class<T> clazz) {
+    public <T> ExcelDocument<T> lookupForDocument(Class<T> clazz) {
         final Optional<ExcelDocument> document = Optional.ofNullable(excelDocuments.get(clazz));
         document.ifPresent(e -> logger.debug("Excel document found for class : " + clazz));
         return document.orElseThrow(() -> new ModelNotFoundException("Cannot find any model for given class : " + clazz));
@@ -60,13 +60,13 @@ public class ExcelManipulationConfiguration {
 
     public <T> List<T> read(Class<T> resultClazz, InputStream inputStream) throws ExcelDocumentCreationException {
         logger.debug("Reading for class type : " + resultClazz);
-        final ExcelDocument excelDocument = lookupForDocument(resultClazz);
+        final ExcelDocument<T> excelDocument = lookupForDocument(resultClazz);
         return documentManipulator.read(excelDocument, inputStream);
     }
 
     public <T> void write(Class<T> clazz, boolean createHeader, List<T> elements, OutputStream outputStream) {
         logger.debug("Writing for class type : " + clazz);
-        final ExcelDocument excelDocument = lookupForDocument(clazz);
+        final ExcelDocument<T> excelDocument = lookupForDocument(clazz);
         documentManipulator.write(excelDocument, createHeader, elements, outputStream);
     }
 

@@ -8,11 +8,11 @@ import java.util.TreeSet;
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/5/2016
  */
-public class ExcelDocument {
+public class ExcelDocument<T> {
 
     public static ExcelDocument EMPTY = new ExcelDocument(null);
 
-    private ExcelRow excelRow;
+    private ExcelRow<T> excelRow;
 
     private SortedSet<ExcelField> excelFields;
 
@@ -21,7 +21,7 @@ public class ExcelDocument {
         this.excelFields = new TreeSet<>(Comparator.comparing(ExcelField::getPosition));
     }
 
-    public ExcelRow getExcelRow() {
+    public ExcelRow<T> getExcelRow() {
         return this.excelRow;
     }
 

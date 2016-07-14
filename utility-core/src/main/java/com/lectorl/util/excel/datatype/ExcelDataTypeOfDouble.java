@@ -1,6 +1,6 @@
 package com.lectorl.util.excel.datatype;
 
-import com.lectorl.util.excel.ExcelDataType;
+import com.lectorl.util.excel.manipulator.ExcelDataType;
 import com.lectorl.util.excel.exception.CellValueConvertException;
 import com.lectorl.util.excel.util.CellUtil;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;

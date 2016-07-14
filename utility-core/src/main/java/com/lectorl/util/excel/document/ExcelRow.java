@@ -5,12 +5,12 @@ import com.lectorl.util.excel.annotation.Row;
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/5/2016
  */
-public class ExcelRow {
+public class ExcelRow<T> {
 
     private String name;
-    private Class clazz;
+    private Class<T> clazz;
 
-    public ExcelRow(Row row, Class clazz) {
+    public ExcelRow(Row row, Class<T> clazz) {
         this.name = row.name();
         this.clazz = clazz;
     }
@@ -19,7 +19,7 @@ public class ExcelRow {
         return name;
     }
 
-    public Class getClazz() {
+    public Class<T> getClazz() {
         return clazz;
     }
 }

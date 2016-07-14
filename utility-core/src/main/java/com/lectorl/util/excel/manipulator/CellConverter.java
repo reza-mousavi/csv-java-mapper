@@ -1,4 +1,4 @@
-package com.lectorl.util.excel;
+package com.lectorl.util.excel.manipulator;
 
 import com.lectorl.util.excel.datatype.*;
 import com.lectorl.util.excel.exception.UnknownCellTypeException;

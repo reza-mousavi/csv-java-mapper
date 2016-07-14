@@ -1,6 +1,6 @@
 package com.lectorl.util.excel.manipulation;
 
-import com.lectorl.util.excel.CellConverter;
+import com.lectorl.util.excel.manipulator.CellConverter;
 import com.lectorl.util.excel.ExcelManipulationConfiguration;
 import com.lectorl.util.excel.ImplementationType;
 import com.lectorl.util.excel.document.ExcelDocument;

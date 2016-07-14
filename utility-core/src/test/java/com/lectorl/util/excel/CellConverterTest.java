@@ -1,6 +1,7 @@
 package com.lectorl.util.excel;
 
 import com.lectorl.util.excel.exception.UnknownCellTypeException;
+import com.lectorl.util.excel.manipulator.CellConverter;
 import com.lectorl.util.excel.util.RowUtil;
 import com.lectorl.util.excel.util.SheetUtil;
 import org.apache.poi.ss.usermodel.Cell;

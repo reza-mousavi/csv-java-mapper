@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface DocumentManipulator {
 
-    <T> List<T> read(ExcelDocument excelDocument, InputStream inputStream) throws ExcelDocumentCreationException;
+    <T> List<T> read(ExcelDocument<T> excelDocument, InputStream inputStream) throws ExcelDocumentCreationException;
 
-    <T> void write(ExcelDocument excelDocument, boolean createHeader, List<T> elements, OutputStream outputStream);
+    <T> void write(ExcelDocument<T> excelDocument, boolean createHeader, List<T> elements, OutputStream outputStream);
 }

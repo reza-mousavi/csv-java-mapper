@@ -1,6 +1,5 @@
 package com.lectorl.util.excel.manipulator;
 
-import com.lectorl.util.excel.CellConverter;
 import com.lectorl.util.excel.DocumentManipulator;
 import com.lectorl.util.excel.ImplementationType;
 import com.lectorl.util.excel.document.ExcelDocument;
@@ -44,7 +43,7 @@ public class PoiDocumentManipulator implements DocumentManipulator {
     }
 
     @Override
-    public <T> List<T> read(ExcelDocument excelDocument, InputStream inputStream) throws ExcelDocumentCreationException {
+    public <T> List<T> read(ExcelDocument<T> excelDocument, InputStream inputStream) throws ExcelDocumentCreationException {
         final List<T> result = new ArrayList<>();
         final Sheet sheet = SheetUtil.getSheet(implementationType, inputStream, 0);
         final int firstRowNum = sheet.getFirstRowNum();
@@ -59,7 +58,7 @@ public class PoiDocumentManipulator implements DocumentManipulator {
     }
 
     @Override
-    public <T> void write(ExcelDocument excelDocument, boolean createHeader, List<T> elements, OutputStream outputStream) {
+    public <T> void write(ExcelDocument<T> excelDocument, boolean createHeader, List<T> elements, OutputStream outputStream) {
         final String sheetName = excelDocument.getExcelRow().getName();
         final Sheet sheet = SheetUtil.createSheet(implementationType, sheetName);
 
@@ -80,9 +79,9 @@ public class PoiDocumentManipulator implements DocumentManipulator {
 
     }
 
-    public <T> T fromRow(Row row, ExcelDocument excelDocument) {
+    public <T> T fromRow(Row row, ExcelDocument<T> excelDocument) {
         try {
-            final T instance = (T) excelDocument.getExcelRow().getClazz().newInstance();
+            final T instance = excelDocument.getExcelRow().getClazz().newInstance();
             excelDocument
                     .getExcelFields()
                     .stream()
@@ -95,7 +94,7 @@ public class PoiDocumentManipulator implements DocumentManipulator {
         return null;
     }
 
-    public Row toHeaderRow(ExcelDocument excelDocument, Sheet sheet) {
+    public <T> Row toHeaderRow(ExcelDocument<T> excelDocument, Sheet sheet) {
         final Row header = RowUtil.createRow(sheet);
         final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
         fieldsStructure
@@ -105,9 +104,8 @@ public class PoiDocumentManipulator implements DocumentManipulator {
         return header;
     }
 
-    public <T> Row toRow(ExcelDocument excelDocument, T record, Sheet sheet) {
+    public <T> Row toRow(ExcelDocument<T> excelDocument, T record, Sheet sheet) {
         final Row row = RowUtil.createRow(sheet);
-        final Optional<T> recordOptional = Optional.ofNullable(record);
         excelDocument
                 .getExcelFields()
                 .stream()

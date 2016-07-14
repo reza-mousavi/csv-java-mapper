@@ -1,6 +1,6 @@
 package com.lectorl.util.excel.datatype;
 
-import com.lectorl.util.excel.ExcelDataType;
+import com.lectorl.util.excel.manipulator.ExcelDataType;
 import com.lectorl.util.excel.util.CellUtil;
 import com.lectorl.util.excel.util.DateTimeUtil;
 import org.apache.poi.ss.usermodel.*;
