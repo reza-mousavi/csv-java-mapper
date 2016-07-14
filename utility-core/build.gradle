@@ -1,9 +1,11 @@
 dependencies {
     testCompile 'junit:junit:4.12'
+    testCompile group: 'log4j', name: 'log4j', version: '1.2.16'
 
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
     compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
     compile group: 'org.apache.poi', name: 'poi', version: '3.9'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.9'
+    compile group: 'commons-logging', name: 'commons-logging', version: '1.2'
 
 }

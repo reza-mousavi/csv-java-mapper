@@ -1,7 +1,8 @@
 package com.lectorl.util.excel.util;
 
 import com.lectorl.util.excel.annotation.Row;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.reflections.Reflections;
 
 import java.util.Set;
@@ -11,7 +12,7 @@ import java.util.Set;
  */
 public class ExcelManipulationModelScanner {
 
-    private static final Logger logger =Logger.getLogger(ExcelManipulationModelScanner.class.getName());
+    private static final Log logger = LogFactory.getLog(ExcelManipulationModelScanner.class);
 
     public static Set<Class<?>> scan(String path) {
         logger.info("Searching classpath for models ...");

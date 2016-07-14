@@ -5,7 +5,8 @@ import com.lectorl.util.excel.annotation.Field;
 import com.lectorl.util.excel.annotation.Row;
 import com.lectorl.util.excel.exception.NoModelException;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -15,7 +16,7 @@ import java.lang.reflect.Method;
  */
 public class ExcelDocumentBuilder {
 
-    private static final Logger logger = Logger.getLogger(ExcelDocumentBuilder.class.getName());
+    private static final Log logger = LogFactory.getLog(ExcelDocumentBuilder.class);
     private Class<?> clazz;
 
     public ExcelDocumentBuilder setClass(Class<?> clazz) {

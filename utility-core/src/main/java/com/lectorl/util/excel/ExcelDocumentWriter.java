@@ -3,7 +3,8 @@ package com.lectorl.util.excel;
 import com.lectorl.util.excel.annotation.Row;
 import com.lectorl.util.excel.exception.ExcelDocumentCreationException;
 import com.lectorl.util.excel.util.SheetUtil;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -17,7 +18,7 @@ import java.util.function.Supplier;
  */
 public class ExcelDocumentWriter {
 
-    private static final Logger logger = Logger.getLogger(ExcelDocumentWriter.class.getName());
+    private static final Log logger = LogFactory.getLog(ExcelDocumentWriter.class);
 
     private boolean createHeader = true;
     private OutputStream outputStream;

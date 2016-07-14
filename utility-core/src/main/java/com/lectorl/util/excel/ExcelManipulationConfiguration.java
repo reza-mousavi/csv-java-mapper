@@ -6,7 +6,8 @@ import com.lectorl.util.excel.document.ExcelField;
 import com.lectorl.util.excel.exception.ModelNotFoundException;
 import com.lectorl.util.excel.util.AnnotationUtil;
 import com.lectorl.util.excel.util.RowUtil;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -21,7 +22,7 @@ import java.util.Set;
  */
 public class ExcelManipulationConfiguration {
 
-    private static final Logger logger = Logger.getLogger(ExcelManipulationConfiguration.class.getName());
+    private static final Log logger = LogFactory.getLog(ExcelManipulationConfiguration.class);
 
     private CellConverter cellConverter;
     private Map<Class, ExcelDocument> excelDocuments;

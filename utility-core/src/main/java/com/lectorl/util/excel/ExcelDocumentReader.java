@@ -2,7 +2,8 @@ package com.lectorl.util.excel;
 
 import com.lectorl.util.excel.exception.ExcelDocumentCreationException;
 import com.lectorl.util.excel.util.SheetUtil;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class ExcelDocumentReader {
 
-    private static final Logger logger = Logger.getLogger(ExcelDocumentReader.class.getName());
+    private static final Log logger = LogFactory.getLog(ExcelDocumentReader.class);
 
     private InputStream inputStream;
 
