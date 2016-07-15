@@ -1,4 +1,4 @@
-package com.lector.util.excel;
+package com.lector.util.excel.model;
 
 import com.lector.util.excel.annotation.Field;
 import com.lector.util.excel.annotation.Row;
@@ -22,7 +22,6 @@ public class Book implements Serializable{
     private String publisher;
     private String language;
     private String isbn;
-    private Double length;
 
     @Field(position = 1)
     public String getTitle() {
@@ -87,15 +86,6 @@ public class Book implements Serializable{
         this.isbn = isbn;
     }
 
-    @Field(position = 10)
-    public Double getLength() {
-        return length;
-    }
-
-    public void setLength(Double length) {
-        this.length = length;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,7 +99,6 @@ public class Book implements Serializable{
         if (releaseDate != null ? !releaseDate.equals(book.releaseDate) : book.releaseDate != null) return false;
         if (publisher != null ? !publisher.equals(book.publisher) : book.publisher != null) return false;
         if (language != null ? !language.equals(book.language) : book.language != null) return false;
-        if (length != null ? !length.equals(book.length) : book.length != null) return false;
         return isbn != null ? isbn.equals(book.isbn) : book.isbn == null;
 
     }
@@ -123,7 +112,6 @@ public class Book implements Serializable{
         result = 31 * result + (publisher != null ? publisher.hashCode() : 0);
         result = 31 * result + (language != null ? language.hashCode() : 0);
         result = 31 * result + (isbn != null ? isbn.hashCode() : 0);
-        result = 31 * result + (length != null ? length.hashCode() : 0);
         return result;
     }
 
@@ -137,7 +125,6 @@ public class Book implements Serializable{
         stringBuilder.append(", publisher='").append(publisher).append('\'');
         stringBuilder.append(", language='").append(language).append('\'');
         stringBuilder.append(", isbn='").append(isbn).append('\'');
-        stringBuilder.append(", length=").append(length);
         stringBuilder.append('}');
         return stringBuilder.toString();
     }

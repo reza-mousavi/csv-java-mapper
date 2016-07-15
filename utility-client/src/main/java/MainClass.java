@@ -1,9 +1,10 @@
 import com.lector.util.excel.Book;
-import com.lectorl.util.excel.Configuration;
-import com.lectorl.util.excel.TabularDocumentWriter;
-import com.lectorl.util.excel.annotation.Row;
-import com.lectorl.util.excel.manipulator.PoiDocumentManipulator;
-import com.lectorl.util.excel.util.AnnotationUtil;
+import com.lector.util.excel.Configuration;
+import com.lector.util.excel.TabularDocumentWriter;
+import com.lector.util.excel.annotation.Row;
+import com.lector.util.excel.manipulator.CSVDocumentManipulator;
+import com.lector.util.excel.manipulator.PoiDocumentManipulator;
+import com.lector.util.excel.util.AnnotationUtil;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.lectorl.util.excel.ImplementationType.XSSF;
+import static com.lector.util.excel.ImplementationType.XSSF;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/5/2016
@@ -49,10 +50,9 @@ public class MainClass {
     private static Configuration createConfiguration() {
         logger.info("Searching classpath for models ...");
         final Set<Class<?>> models = AnnotationUtil.scanForAnnotatedClass("com.lector", Row.class);
-        final Configuration configuration = new Configuration();
-        configuration.addModel(models)
-                .setDocumentManipulator(new PoiDocumentManipulator(XSSF));
-        return configuration;
+        return new Configuration()
+                .addModel(models)
+                .setDocumentManipulator(new CSVDocumentManipulator());
     }
 
     private static List<Book> getListOfRecords() {
@@ -96,7 +96,7 @@ public class MainClass {
         book.setLanguage("Danish");
         book.setPrice(new BigDecimal(11.5));
         book.setPublisher("Dane Publishing");
-        book.setReleaseDate(LocalDate.of(2010,10,10));
+        book.setReleaseDate(LocalDate.of(2010, 10, 10));
         book.setTitle("Danish journey");
         book.setLength(8d);
         rows.add(book);
