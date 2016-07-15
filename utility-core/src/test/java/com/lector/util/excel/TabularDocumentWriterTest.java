@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lector.util.excel.ImplementationType.HSSF;
+import static com.lector.util.excel.manipulator.ImplementationType.HSSF;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016

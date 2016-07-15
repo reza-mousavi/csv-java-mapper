@@ -3,7 +3,6 @@ import com.lector.util.excel.Configuration;
 import com.lector.util.excel.TabularDocumentWriter;
 import com.lector.util.excel.annotation.Row;
 import com.lector.util.excel.manipulator.CSVDocumentManipulator;
-import com.lector.util.excel.manipulator.PoiDocumentManipulator;
 import com.lector.util.excel.util.AnnotationUtil;
 import org.apache.log4j.Logger;
 
@@ -15,8 +14,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static com.lector.util.excel.ImplementationType.XSSF;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/5/2016

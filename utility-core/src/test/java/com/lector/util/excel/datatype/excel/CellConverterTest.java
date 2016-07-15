@@ -1,6 +1,6 @@
 package com.lector.util.excel.datatype.excel;
 
-import com.lector.util.excel.ImplementationType;
+import com.lector.util.excel.manipulator.ImplementationType;
 import com.lector.util.excel.exception.UnknownCellTypeException;
 import com.lector.util.excel.util.RowUtil;
 import com.lector.util.excel.util.SheetUtil;

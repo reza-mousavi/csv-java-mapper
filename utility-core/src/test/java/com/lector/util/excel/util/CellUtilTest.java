@@ -1,7 +1,7 @@
 package com.lector.util.excel.util;
 
 import com.lector.util.excel.datatype.excel.CellConverter;
-import com.lector.util.excel.ImplementationType;
+import com.lector.util.excel.manipulator.ImplementationType;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.Assert;
 import org.junit.Before;

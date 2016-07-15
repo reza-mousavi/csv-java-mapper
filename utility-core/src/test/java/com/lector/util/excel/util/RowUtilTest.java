@@ -1,6 +1,6 @@
 package com.lector.util.excel.util;
 
-import com.lector.util.excel.ImplementationType;
+import com.lector.util.excel.manipulator.ImplementationType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.Assert;

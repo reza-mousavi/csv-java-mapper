@@ -1,7 +1,6 @@
 package com.lector.util.excel.manipulator;
 
 import com.lector.util.excel.Configuration;
-import com.lector.util.excel.ImplementationType;
 import com.lector.util.excel.exception.CellValueConvertException;
 import com.lector.util.excel.model.Book;
 import com.lector.util.excel.datatype.excel.CellConverter;

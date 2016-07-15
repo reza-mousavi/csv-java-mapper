@@ -1,4 +1,4 @@
-package com.lector.util.excel;
+package com.lector.util.excel.manipulator;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/13/2016

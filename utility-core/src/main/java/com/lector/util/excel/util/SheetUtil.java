@@ -1,6 +1,6 @@
 package com.lector.util.excel.util;
 
-import com.lector.util.excel.ImplementationType;
+import com.lector.util.excel.manipulator.ImplementationType;
 import com.lector.util.excel.exception.ExcelManipulationIOException;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
