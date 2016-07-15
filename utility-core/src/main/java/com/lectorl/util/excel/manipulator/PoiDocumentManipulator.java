@@ -2,7 +2,8 @@ package com.lectorl.util.excel.manipulator;
 
 import com.lectorl.util.excel.DocumentManipulator;
 import com.lectorl.util.excel.ImplementationType;
-import com.lectorl.util.excel.document.ExcelDocument;
+import com.lectorl.util.excel.datatype.excel.CellConverter;
+import com.lectorl.util.excel.document.TabularDocument;
 import com.lectorl.util.excel.document.ExcelField;
 import com.lectorl.util.excel.exception.ExcelDocumentCreationException;
 import com.lectorl.util.excel.util.AnnotationUtil;
@@ -43,14 +44,14 @@ public class PoiDocumentManipulator implements DocumentManipulator {
     }
 
     @Override
-    public <T> List<T> read(ExcelDocument<T> excelDocument, InputStream inputStream) throws ExcelDocumentCreationException {
+    public <T> List<T> read(TabularDocument<T> tabularDocument, InputStream inputStream) throws ExcelDocumentCreationException {
         final List<T> result = new ArrayList<>();
         final Sheet sheet = SheetUtil.getSheet(implementationType, inputStream, 0);
         final int firstRowNum = sheet.getFirstRowNum();
         final int lastRowNum = sheet.getLastRowNum();
         for (int rowNum = firstRowNum + 1; rowNum <= lastRowNum; rowNum++) {
             final Row row = sheet.getRow(rowNum);
-            final T instance = fromRow(row, excelDocument);
+            final T instance = fromRow(row, tabularDocument);
             logger.debug("Read object is : " + instance);
             result.add(instance);
         }
@@ -58,17 +59,17 @@ public class PoiDocumentManipulator implements DocumentManipulator {
     }
 
     @Override
-    public <T> void write(ExcelDocument<T> excelDocument, boolean createHeader, List<T> elements, OutputStream outputStream) {
-        final String sheetName = excelDocument.getExcelRow().getName();
+    public <T> void write(TabularDocument<T> tabularDocument, boolean createHeader, List<T> elements, OutputStream outputStream) {
+        final String sheetName = tabularDocument.getExcelRow().getName();
         final Sheet sheet = SheetUtil.createSheet(implementationType, sheetName);
 
         try {
             if (createHeader) {
-                toHeaderRow(excelDocument, sheet);
+                toHeaderRow(tabularDocument, sheet);
             }
             elements.stream()
                     .peek(record -> logger.debug("Converting to excel row : " + record))
-                    .forEach(record -> toRow(excelDocument, record, sheet));
+                    .forEach(record -> toRow(tabularDocument, record, sheet));
 
             final Workbook workbook = sheet.getWorkbook();
             workbook.write(outputStream);
@@ -79,24 +80,19 @@ public class PoiDocumentManipulator implements DocumentManipulator {
 
     }
 
-    public <T> T fromRow(Row row, ExcelDocument<T> excelDocument) {
-        try {
-            final T instance = excelDocument.getExcelRow().getClazz().newInstance();
-            excelDocument
-                    .getExcelFields()
-                    .stream()
-                    .peek(e -> logger.debug("Setting value for property : " + e.getPropertyDescriptor().getName()))
-                    .forEach(excelField -> fromColumnToJava(row, instance, excelField));
-            return instance;
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public <T> T fromRow(Row row, TabularDocument<T> tabularDocument) {
+        final T instance = tabularDocument.newInstance();
+        tabularDocument
+                .getExcelFields()
+                .stream()
+                .peek(e -> logger.debug("Setting value for property : " + e.getPropertyDescriptor().getName()))
+                .forEach(excelField -> fromColumnToJava(row, instance, excelField));
+        return instance;
     }
 
-    public <T> Row toHeaderRow(ExcelDocument<T> excelDocument, Sheet sheet) {
+    public <T> Row toHeaderRow(TabularDocument<T> tabularDocument, Sheet sheet) {
         final Row header = RowUtil.createRow(sheet);
-        final Set<ExcelField> fieldsStructure = excelDocument.getExcelFields();
+        final Set<ExcelField> fieldsStructure = tabularDocument.getExcelFields();
         fieldsStructure
                 .stream()
                 .peek(e -> logger.debug("\t\tMethod found for property : " + e.getPropertyDescriptor().getName()))
@@ -104,9 +100,9 @@ public class PoiDocumentManipulator implements DocumentManipulator {
         return header;
     }
 
-    public <T> Row toRow(ExcelDocument<T> excelDocument, T record, Sheet sheet) {
+    public <T> Row toRow(TabularDocument<T> tabularDocument, T record, Sheet sheet) {
         final Row row = RowUtil.createRow(sheet);
-        excelDocument
+        tabularDocument
                 .getExcelFields()
                 .stream()
                 .forEach(e -> fromJavaToColumn(record, row, e));

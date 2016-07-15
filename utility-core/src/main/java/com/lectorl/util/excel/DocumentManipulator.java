@@ -1,6 +1,6 @@
 package com.lectorl.util.excel;
 
-import com.lectorl.util.excel.document.ExcelDocument;
+import com.lectorl.util.excel.document.TabularDocument;
 import com.lectorl.util.excel.exception.ExcelDocumentCreationException;
 
 import java.io.InputStream;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface DocumentManipulator {
 
-    <T> List<T> read(ExcelDocument<T> excelDocument, InputStream inputStream) throws ExcelDocumentCreationException;
+    <T> List<T> read(TabularDocument<T> tabularDocument, InputStream inputStream) throws ExcelDocumentCreationException;
 
-    <T> void write(ExcelDocument<T> excelDocument, boolean createHeader, List<T> elements, OutputStream outputStream);
+    <T> void write(TabularDocument<T> tabularDocument, boolean createHeader, List<T> elements, OutputStream outputStream);
 }

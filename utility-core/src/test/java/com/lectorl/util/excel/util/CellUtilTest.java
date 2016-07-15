@@ -1,6 +1,6 @@
 package com.lectorl.util.excel.util;
 
-import com.lectorl.util.excel.manipulator.CellConverter;
+import com.lectorl.util.excel.datatype.excel.CellConverter;
 import com.lectorl.util.excel.ImplementationType;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.Assert;

@@ -1,6 +1,8 @@
 package com.lectorl.util.excel;
 
-import com.lectorl.util.excel.util.CellUtilTest;
+import com.lectorl.util.excel.datatype.DataTypeSuiteTest;
+import com.lectorl.util.excel.manipulator.DocumentManipulatorSuiteTest;
+import com.lectorl.util.excel.util.UtilSuiteTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -9,10 +11,11 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        CellUtilTest.class,
-        CellConverterTest.class,
-        ExcelManipulationConfigurationTest.class,
-        ExcelDocumentWriterTest.class,
+        DataTypeSuiteTest.class,
+        UtilSuiteTest.class,
+        DocumentManipulatorSuiteTest.class,
+        ConfigurationTest.class,
+        TabularDocumentWriterTest.class,
         BlackBoxTest.class,
 })
 public class MainTest {

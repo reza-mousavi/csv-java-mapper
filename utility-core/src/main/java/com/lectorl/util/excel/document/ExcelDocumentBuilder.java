@@ -14,43 +14,43 @@ import java.lang.reflect.Method;
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/5/2016
  */
-public class ExcelDocumentBuilder {
+public class ExcelDocumentBuilder<T> {
 
     private static final Log logger = LogFactory.getLog(ExcelDocumentBuilder.class);
-    private Class<?> clazz;
+    private Class<T> clazz;
 
-    public ExcelDocumentBuilder setClass(Class<?> clazz) {
+    public ExcelDocumentBuilder setClass(Class<T> clazz) {
         this.clazz = clazz;
         return this;
     }
 
-    public ExcelDocument build() {
+    public TabularDocument<T> build() {
         if(!clazz.isAnnotationPresent(Row.class)){
             throw new NoModelException(
                     "Class : " +clazz.getName()+ " is not a valid model. " +
                     "It should have the annotation <Row> over it.");
         }
         final Row row = clazz.getAnnotation(Row.class);
-        final ExcelRow excelRow = new ExcelRow(row, clazz);
+        final ExcelRow<T> excelRow = new ExcelRow<T>(row, clazz);
         logger.debug("Excel sheet name is : '" + excelRow.getName() + "'.");
-        final ExcelDocument excelDocument = new ExcelDocument(excelRow);
+        final TabularDocument<T> tabularDocument = new TabularDocument<>(excelRow);
         final PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             final Method readMethod = propertyDescriptor.getReadMethod();
             final Field annotation = readMethod.getAnnotation(Field.class);
             if (annotation != null) {
                 logger.debug("Adding excel field : '" + propertyDescriptor.getName() + "' to the model : " + clazz.getName());
-                addFiled(excelDocument, annotation, propertyDescriptor);
+                addFiled(tabularDocument, annotation, propertyDescriptor);
             }
         }
         logger.debug("------------All fields has been read -----------.");
-        return excelDocument;
+        return tabularDocument;
     }
 
-    private ExcelDocumentBuilder addFiled(ExcelDocument excelDocument, Field field, PropertyDescriptor propertyDescriptor) {
+    private ExcelDocumentBuilder addFiled(TabularDocument tabularDocument, Field field, PropertyDescriptor propertyDescriptor) {
         final String fieldName = AnnotationUtil.getFieldName(field, propertyDescriptor);
         final ExcelField excelField = new ExcelField(fieldName, field, propertyDescriptor);
-        excelDocument.addExcelFields(excelField);
+        tabularDocument.addExcelFields(excelField);
         return this;
     }
 }

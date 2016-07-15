@@ -2,8 +2,11 @@ package com.lectorl.util.excel;
 
 import com.lectorl.util.excel.exception.ExcelDocumentCreationException;
 import com.lectorl.util.excel.exception.ExcelManipulationIOException;
+import com.lectorl.util.excel.manipulator.CSVDocumentManipulator;
+import com.lectorl.util.excel.manipulator.PoiDocumentManipulator;
 import com.lectorl.util.excel.model.Book;
 import com.lectorl.util.excel.model.Person;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +22,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.lectorl.util.excel.ImplementationType.HSSF;
+import static com.lectorl.util.excel.ImplementationType.XSSF;
+
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
  */
@@ -27,11 +33,22 @@ public class BlackBoxTest {
 
     public static final String TEST_XLS = "test.xls";
     public static final String TEST_XLSX = "test.xlsx";
+    public static final String TEST_CSV = "test.csv";
 
     @Before
+    public void before(){
+        cleanTestFolder();
+    }
+
+    @After
+    public void after() {
+        cleanTestFolder();
+    }
+
     public void cleanTestFolder() {
-        deleteFile(TEST_XLSX);
+        deleteFile(TEST_CSV);
         deleteFile(TEST_XLS);
+        deleteFile(TEST_XLSX);
     }
 
     private void deleteFile(String testXls) {
@@ -43,19 +60,18 @@ public class BlackBoxTest {
 
     @Test
     public void testWritingBooks() throws IOException, ExcelDocumentCreationException {
-        deleteFile(TEST_XLS);
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Book> listOfRecords = getListOfBooks();
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setImplementationType(ImplementationType.HSSF);
-        new ExcelDocumentWriter()
+        configuration.setDocumentManipulator(new PoiDocumentManipulator(HSSF));
+        new TabularDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
-        final List<Book> books = new ExcelDocumentReader()
+        final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
                 .setInputStream(inputStream)
                 .read(Book.class);
@@ -64,20 +80,19 @@ public class BlackBoxTest {
 
     @Test(expected = ExcelManipulationIOException.class)
     public void testWritingBooksIncompatibleImplementation() throws IOException, ExcelDocumentCreationException {
-        deleteFile(TEST_XLS);
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Book> listOfRecords = getListOfBooks();
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setImplementationType(ImplementationType.XSSF);
-        new ExcelDocumentWriter()
+        configuration.setDocumentManipulator(new PoiDocumentManipulator(XSSF));
+        new TabularDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
-        configuration.setImplementationType(ImplementationType.HSSF);
+        configuration.setDocumentManipulator(new PoiDocumentManipulator(HSSF));
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
-        final List<Book> books = new ExcelDocumentReader()
+        final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
                 .setInputStream(inputStream)
                 .read(Book.class);
@@ -86,20 +101,19 @@ public class BlackBoxTest {
 
     @Test(expected = ExcelManipulationIOException.class)
     public void testWritingBooksIncompatibleImplementation2() throws IOException, ExcelDocumentCreationException {
-        deleteFile(TEST_XLS);
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Book> listOfRecords = getListOfBooks();
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setImplementationType(ImplementationType.HSSF);
-        new ExcelDocumentWriter()
+        configuration.setDocumentManipulator(new PoiDocumentManipulator(HSSF));
+        new TabularDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
-        configuration.setImplementationType(ImplementationType.XSSF);
-        final List<Book> books = new ExcelDocumentReader()
+        configuration.setDocumentManipulator(new PoiDocumentManipulator(XSSF));
+        final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
                 .setInputStream(inputStream)
                 .read(Book.class);
@@ -108,19 +122,18 @@ public class BlackBoxTest {
 
     @Test
     public void testWritingXssfBooks() throws IOException, ExcelDocumentCreationException {
-        deleteFile(TEST_XLSX);
         final FileOutputStream out = new FileOutputStream(TEST_XLSX);
         final List<Book> listOfRecords = getListOfBooks();
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setImplementationType(ImplementationType.XSSF);
-        new ExcelDocumentWriter()
+        configuration.setDocumentManipulator(new PoiDocumentManipulator(XSSF));
+        new TabularDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLSX);
-        final List<Book> books = new ExcelDocumentReader()
+        final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
                 .setInputStream(inputStream)
                 .read(Book.class);
@@ -130,18 +143,17 @@ public class BlackBoxTest {
     @Test
     public void testWritingBooksInAnotherDocument() throws IOException, ExcelDocumentCreationException {
         final String fileName = "test2.xls";
-        deleteFile(TEST_XLS);
         final FileOutputStream out = new FileOutputStream(fileName);
         final List<Book> listOfBooks = getListOfBooks();
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration();
+        final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setImplementationType(ImplementationType.HSSF);
-        new ExcelDocumentWriter()
+        configuration.setDocumentManipulator(new PoiDocumentManipulator(HSSF));
+        new TabularDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .write(Book.class, listOfBooks);
         final FileInputStream inputStream = new FileInputStream(fileName);
-        final List<Book> books = new ExcelDocumentReader()
+        final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
                 .setInputStream(inputStream)
                 .read(Book.class);
@@ -151,23 +163,42 @@ public class BlackBoxTest {
 
     @Test
     public void testWritingPersons() throws IOException, ExcelDocumentCreationException {
-        deleteFile(TEST_XLS);
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Person> listOfRecords = getListOfPersons();
-        final ExcelManipulationConfiguration configuration = new ExcelManipulationConfiguration()
+        final Configuration configuration = new Configuration()
                 .addModel(Person.class)
-                .setImplementationType(ImplementationType.HSSF);
-        new ExcelDocumentWriter()
+                .setDocumentManipulator(new PoiDocumentManipulator(HSSF));
+        new TabularDocumentWriter()
                 .setConfiguration(configuration)
                 .setOutputStream(out)
                 .write(Person.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
-        final List<Person> persons = new ExcelDocumentReader()
+        final List<Person> persons = new TabularDocumentReader()
                 .setConfiguration(configuration)
                 .setInputStream(inputStream)
                 .read(Person.class);
         assertElementsAreEqual(listOfRecords, persons);
+    }
+
+    @Test
+    public void testWritingBooksInCSV() throws IOException, ExcelDocumentCreationException {
+        final FileOutputStream out = new FileOutputStream(TEST_CSV);
+        final List<Book> listOfRecords = getListOfBooks();
+        final Configuration configuration = new Configuration();
+        configuration.addModel(Book.class);
+        configuration.setDocumentManipulator(new CSVDocumentManipulator());
+        new TabularDocumentWriter()
+                .setConfiguration(configuration)
+                .setOutputStream(out)
+                .write(Book.class, listOfRecords);
+        out.close();
+        final FileInputStream inputStream = new FileInputStream(TEST_CSV);
+        final List<Book> books = new TabularDocumentReader()
+                .setConfiguration(configuration)
+                .setInputStream(inputStream)
+                .read(Book.class);
+        assertElementsAreEqual(listOfRecords, books);
     }
 
     private <E> void assertElementsAreEqual(List<E> listOfRecords, List<E> books) {
