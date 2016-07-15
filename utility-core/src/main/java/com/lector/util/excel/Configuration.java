@@ -1,15 +1,15 @@
 package com.lector.util.excel;
 
 import com.lector.util.excel.document.ExcelDocumentBuilder;
-import com.lector.util.excel.exception.ModelNotFoundException;
 import com.lector.util.excel.document.TabularDocument;
-import com.lector.util.excel.exception.ExcelDocumentCreationException;
+import com.lector.util.excel.exception.ModelNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
@@ -19,19 +19,9 @@ public class Configuration {
     private static final Log logger = LogFactory.getLog(Configuration.class);
 
     private Map<Class, TabularDocument> excelDocuments;
-    private DocumentManipulator documentManipulator;
 
     public Configuration() {
         this.excelDocuments = new HashMap<>();
-    }
-
-    public DocumentManipulator getDocumentManipulator() {
-        return documentManipulator;
-    }
-
-    public Configuration setDocumentManipulator(DocumentManipulator documentManipulator) {
-        this.documentManipulator = documentManipulator;
-        return this;
     }
 
     public Configuration addModel(Set<Class<?>> classes) {
@@ -53,18 +43,6 @@ public class Configuration {
         final Optional<TabularDocument> document = Optional.ofNullable(excelDocuments.get(clazz));
         document.ifPresent(e -> logger.debug("Excel document found for class : " + clazz));
         return document.orElseThrow(() -> new ModelNotFoundException("Cannot find any model for given class : " + clazz));
-    }
-
-    public <T> List<T> read(Class<T> resultClazz, InputStream inputStream) throws ExcelDocumentCreationException {
-        logger.debug("Reading for class type : " + resultClazz);
-        final TabularDocument<T> tabularDocument = lookupForDocument(resultClazz);
-        return documentManipulator.read(tabularDocument, inputStream);
-    }
-
-    public <T> void write(Class<T> clazz, boolean createHeader, List<T> elements, OutputStream outputStream) {
-        logger.debug("Writing for class type : " + clazz);
-        final TabularDocument<T> tabularDocument = lookupForDocument(clazz);
-        documentManipulator.write(tabularDocument, createHeader, elements, outputStream);
     }
 
 }

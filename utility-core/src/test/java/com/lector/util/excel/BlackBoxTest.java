@@ -34,7 +34,7 @@ public class BlackBoxTest {
     public static final String TEST_CSV = "test.csv";
 
     @Before
-    public void before(){
+    public void before() {
         cleanTestFolder();
     }
 
@@ -62,9 +62,9 @@ public class BlackBoxTest {
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF));
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF))
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
@@ -72,6 +72,7 @@ public class BlackBoxTest {
         final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
                 .setInputStream(inputStream)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF))
                 .read(Book.class);
         assertElementsAreEqual(listOfRecords, books);
     }
@@ -82,16 +83,16 @@ public class BlackBoxTest {
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.XSSF));
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.XSSF))
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF));
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
         final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF))
                 .setInputStream(inputStream)
                 .read(Book.class);
         assertElementsAreEqual(listOfRecords, books);
@@ -103,16 +104,16 @@ public class BlackBoxTest {
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF));
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF))
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.XSSF));
         final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.XSSF))
                 .setInputStream(inputStream)
                 .read(Book.class);
         assertElementsAreEqual(listOfRecords, books);
@@ -124,15 +125,16 @@ public class BlackBoxTest {
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.XSSF));
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.XSSF))
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLSX);
         final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.XSSF))
                 .setInputStream(inputStream)
                 .read(Book.class);
         assertElementsAreEqual(listOfRecords, books);
@@ -145,14 +147,15 @@ public class BlackBoxTest {
         final List<Book> listOfBooks = getListOfBooks();
         final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF));
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF))
                 .setOutputStream(out)
                 .write(Book.class, listOfBooks);
         final FileInputStream inputStream = new FileInputStream(fileName);
         final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF))
                 .setInputStream(inputStream)
                 .read(Book.class);
         assertElementsAreEqual(listOfBooks, books);
@@ -164,16 +167,17 @@ public class BlackBoxTest {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Person> listOfRecords = getListOfPersons();
         final Configuration configuration = new Configuration()
-                .addModel(Person.class)
-                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF));
+                .addModel(Person.class);
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF))
                 .setOutputStream(out)
                 .write(Person.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_XLS);
         final List<Person> persons = new TabularDocumentReader()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(ImplementationType.HSSF))
                 .setInputStream(inputStream)
                 .read(Person.class);
         assertElementsAreEqual(listOfRecords, persons);
@@ -185,15 +189,16 @@ public class BlackBoxTest {
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
-        configuration.setDocumentManipulator(new CSVDocumentManipulator());
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new CSVDocumentManipulator())
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_CSV);
         final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new CSVDocumentManipulator())
                 .setInputStream(inputStream)
                 .read(Book.class);
         assertElementsAreEqual(listOfRecords, books);

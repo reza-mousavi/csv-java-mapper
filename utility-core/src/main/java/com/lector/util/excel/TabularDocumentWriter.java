@@ -1,5 +1,6 @@
 package com.lector.util.excel;
 
+import com.lector.util.excel.document.TabularDocument;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -17,6 +18,7 @@ public class TabularDocumentWriter {
     private boolean createHeader = true;
     private OutputStream outputStream;
     private Configuration configuration;
+    private DocumentManipulator documentManipulator;
 
     public Configuration getConfiguration() {
         return configuration;
@@ -32,6 +34,11 @@ public class TabularDocumentWriter {
         return this;
     }
 
+    public TabularDocumentWriter setDocumentManipulator(DocumentManipulator documentManipulator) {
+        this.documentManipulator = documentManipulator;
+        return this;
+    }
+
     public TabularDocumentWriter setCreateHeader(boolean createHeader) {
         this.createHeader = createHeader;
         return this;
@@ -44,7 +51,9 @@ public class TabularDocumentWriter {
 
     public <T> void write(Class<T> clazz, List<T> elements) {
         logger.debug("Writing excel document.");
-        configuration.write(clazz, createHeader, elements, outputStream);
+        logger.debug("Writing for class type : " + clazz);
+        final TabularDocument<T> tabularDocument = configuration.lookupForDocument(clazz);
+        documentManipulator.write(tabularDocument, createHeader, elements, outputStream);
     }
 
 }

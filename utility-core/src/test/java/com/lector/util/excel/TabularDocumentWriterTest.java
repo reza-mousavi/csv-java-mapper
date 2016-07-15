@@ -113,10 +113,10 @@ public class TabularDocumentWriterTest {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final Configuration configuration = new Configuration();
         configuration.addModel(clazz);
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(HSSF));
         final List<T> elements = new ArrayList<>();
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
+                .setDocumentManipulator(new PoiDocumentManipulator(HSSF))
                 .setOutputStream(out)
                 .write(clazz, elements);
         out.close();
@@ -194,10 +194,10 @@ public class TabularDocumentWriterTest {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final Configuration configuration = new Configuration();
         configuration.addModel(modelClass);
-        configuration.setDocumentManipulator(new PoiDocumentManipulator(HSSF));
         final TabularDocumentWriter tabularDocumentWriter = new TabularDocumentWriter();
         tabularDocumentWriter.setConfiguration(configuration)
                 .setCreateHeader(createHeader)
+                .setDocumentManipulator(new PoiDocumentManipulator(HSSF))
                 .setOutputStream(out)
                 .write(modelClass, listOfRecords);
         out.close();

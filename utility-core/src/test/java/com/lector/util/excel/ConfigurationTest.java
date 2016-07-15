@@ -32,7 +32,7 @@ public class ConfigurationTest {
         configuration.lookupForDocument(Book.class);
     }
 
-    @Test
+    /*@Test
     public void testHssfImplementationType() throws IOException {
         final Configuration configuration = new Configuration();
         configuration.addModel(Person.class);
@@ -72,6 +72,6 @@ public class ConfigurationTest {
         Assert.assertNotEquals(null, configuration.getDocumentManipulator());
         Assert.assertEquals(CSVDocumentManipulator.class, configuration.getDocumentManipulator().getClass());
         Assert.assertNotEquals(PoiDocumentManipulator.class, configuration.getDocumentManipulator().getClass());
-    }
+    }*/
 
 }

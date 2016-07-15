@@ -1,5 +1,6 @@
 package com.lector.util.excel;
 
+import com.lector.util.excel.document.TabularDocument;
 import com.lector.util.excel.exception.ExcelDocumentCreationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +17,12 @@ public class TabularDocumentReader {
 
     private InputStream inputStream;
     private Configuration configuration;
+    private DocumentManipulator documentManipulator;
+
+    public TabularDocumentReader setDocumentManipulator(DocumentManipulator documentManipulator) {
+        this.documentManipulator = documentManipulator;
+        return this;
+    }
 
     public TabularDocumentReader setConfiguration(Configuration configuration) {
         this.configuration = configuration;
@@ -29,7 +36,9 @@ public class TabularDocumentReader {
 
     public <T> List<T> read(Class<T> resultClazz) throws ExcelDocumentCreationException {
         logger.debug("Reading from excel document");
-        return configuration.read(resultClazz, inputStream);
+        logger.debug("Reading for class type : " + resultClazz);
+        final TabularDocument<T> tabularDocument = configuration.lookupForDocument(resultClazz);
+        return documentManipulator.read(tabularDocument, inputStream);
     }
 
 }

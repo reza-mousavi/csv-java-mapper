@@ -36,6 +36,7 @@ public class MainClass {
             new TabularDocumentWriter()
                     .setCreateHeader(true)
                     .setConfiguration(MainClass::createConfiguration)
+                    .setDocumentManipulator(new CSVDocumentManipulator())
                     .setOutputStream(out)
                     .write(Book.class, listOfRecords);
             out.close();
@@ -48,8 +49,7 @@ public class MainClass {
         logger.info("Searching classpath for models ...");
         final Set<Class<?>> models = AnnotationUtil.scanForAnnotatedClass("com.lector", Row.class);
         return new Configuration()
-                .addModel(models)
-                .setDocumentManipulator(new CSVDocumentManipulator());
+                .addModel(models);
     }
 
     private static List<Book> getListOfRecords() {
