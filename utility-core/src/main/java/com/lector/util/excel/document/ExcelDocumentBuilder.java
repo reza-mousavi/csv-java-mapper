@@ -25,13 +25,13 @@ public class ExcelDocumentBuilder<T> {
     }
 
     public TabularDocument<T> build() {
-        if(!clazz.isAnnotationPresent(Row.class)){
+        if (!clazz.isAnnotationPresent(Row.class)) {
             throw new NoModelException(
-                    "Class : " +clazz.getName()+ " is not a valid model. " +
-                    "It should have the annotation <Row> over it.");
+                    "Class : " + clazz.getName() + " is not a valid model. " +
+                            "It should have the annotation <Row> over it.");
         }
         final Row row = clazz.getAnnotation(Row.class);
-        final ExcelRow<T> excelRow = new ExcelRow<T>(row, clazz);
+        final ExcelRow<T> excelRow = new ExcelRow<>(row, clazz);
         logger.debug("Excel sheet name is : '" + excelRow.getName() + "'.");
         final TabularDocument<T> tabularDocument = new TabularDocument<>(excelRow);
         final PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);

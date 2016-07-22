@@ -1,5 +1,6 @@
 package com.lector.util.excel.manipulator;
 
+import com.lector.util.excel.AbstractDocumentManipulator;
 import com.lector.util.excel.DocumentManipulator;
 import com.lector.util.excel.document.ExcelField;
 import com.lector.util.excel.util.AnnotationUtil;
@@ -22,11 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/14/2016
  */
-public class PoiDocumentManipulator implements DocumentManipulator {
+public class PoiDocumentManipulator extends AbstractDocumentManipulator {
 
     private static final Log logger = LogFactory.getLog(PoiDocumentManipulator.class);
 
@@ -44,17 +47,13 @@ public class PoiDocumentManipulator implements DocumentManipulator {
 
     @Override
     public <T> List<T> read(TabularDocument<T> tabularDocument, InputStream inputStream) throws ExcelDocumentCreationException {
-        final List<T> result = new ArrayList<>();
         final Sheet sheet = SheetUtil.getSheet(implementationType, inputStream, 0);
-        final int firstRowNum = sheet.getFirstRowNum();
-        final int lastRowNum = sheet.getLastRowNum();
-        for (int rowNum = firstRowNum + 1; rowNum <= lastRowNum; rowNum++) {
-            final Row row = sheet.getRow(rowNum);
-            final T instance = fromRow(row, tabularDocument);
-            logger.debug("Read object is : " + instance);
-            result.add(instance);
-        }
-        return result;
+        return IntStream.rangeClosed(sheet.getFirstRowNum() + 1, sheet.getLastRowNum())
+                .mapToObj(sheet::getRow)
+                .peek(instance -> logger.debug("Read object is : " + instance))
+                .map(row -> fromRow(row, tabularDocument))
+                .collect(Collectors.toList());
+
     }
 
     @Override
@@ -123,12 +122,11 @@ public class PoiDocumentManipulator implements DocumentManipulator {
 
     private <T> void fromJavaToColumn(T record, Row row, ExcelField excelField) {
         final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
-        final T value = AnnotationUtil.getPropertyValue(record, propertyDescriptor);
         final int position = excelField.getPosition();
+        final T value = AnnotationUtil.getPropertyValue(record, propertyDescriptor);
         logger.debug("Value for property is : " + value);
-        if (value != null) {
-            cellConverter.fromJava(row, position, value);
-        }
+        Optional.ofNullable(value)
+                .ifPresent(e -> cellConverter.fromJava(row, position, value));
     }
 
 }

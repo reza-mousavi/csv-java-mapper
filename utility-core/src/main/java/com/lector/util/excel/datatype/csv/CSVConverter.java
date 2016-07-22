@@ -2,6 +2,7 @@ package com.lector.util.excel.datatype.csv;
 
 import com.lector.util.excel.datatype.Blank;
 import com.lector.util.excel.util.AnnotationUtil;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class CSVConverter {
     public <T> Optional<T> toJava(String value, Class<T> resultClass) {
         final Optional<String> stringOp = Optional
                 .ofNullable(value)
-                .filter(v -> v != null && !v.equals(""));
+                .filter(StringUtils::hasText);
 
         if (!stringOp.isPresent()) return Optional.empty();
         final Optional<CSVDataType<T>> dataTypeHandler = getHandler(resultClass);

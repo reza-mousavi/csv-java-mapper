@@ -1,5 +1,6 @@
 package com.lector.util.excel.manipulator;
 
+import com.lector.util.excel.AbstractDocumentManipulator;
 import com.lector.util.excel.DocumentManipulator;
 import com.lector.util.excel.document.ExcelField;
 import com.lector.util.excel.exception.InvalidCSVRowException;
@@ -21,10 +22,10 @@ import java.util.stream.IntStream;
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/14/2016
  */
-public class CSVDocumentManipulator implements DocumentManipulator {
+public class CSVDocumentManipulator extends AbstractDocumentManipulator {
 
     private static final Log logger = LogFactory.getLog(CSVDocumentManipulator.class);
-    public static final String COMMA = ",";
+    private static final String COMMA = ",";
 
     private CSVConverter cSVConverter;
 
