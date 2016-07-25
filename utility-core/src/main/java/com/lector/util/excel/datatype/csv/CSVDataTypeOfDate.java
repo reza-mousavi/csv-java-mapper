@@ -4,7 +4,6 @@ import com.lector.util.excel.util.DateTimeUtil;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/12/2016
@@ -28,8 +27,4 @@ public class CSVDataTypeOfDate implements CSVDataType<Date> {
         return Date.class;
     }
 
-    @Override
-    public Supplier<? extends CSVDataType<Date>> getSupplier() {
-        return CSVDataTypeOfDate::new;
-    }
 }

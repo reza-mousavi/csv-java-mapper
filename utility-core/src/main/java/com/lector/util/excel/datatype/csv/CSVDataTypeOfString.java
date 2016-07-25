@@ -1,7 +1,6 @@
 package com.lector.util.excel.datatype.csv;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/12/2016
@@ -23,8 +22,4 @@ public class CSVDataTypeOfString implements CSVDataType<String> {
         return String.class;
     }
 
-    @Override
-    public Supplier<? extends CSVDataType<String>> getSupplier() {
-        return CSVDataTypeOfString::new;
-    }
 }

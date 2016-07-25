@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class CSVConverter {
 
-    public static final String EMPTY_STRING = "";
+    private static final String EMPTY_STRING = "";
     private Map<Class<?>, CSVDataType> csvDataTypeMap;
 
     public CSVConverter() {

@@ -4,7 +4,6 @@ import com.lector.util.excel.util.DateTimeUtil;
 
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/12/2016
@@ -28,8 +27,4 @@ public class CSVDataTypeOfLocalDate implements CSVDataType<LocalDate> {
         return LocalDate.class;
     }
 
-    @Override
-    public Supplier<? extends CSVDataType<LocalDate>> getSupplier() {
-        return CSVDataTypeOfLocalDate::new;
-    }
 }
