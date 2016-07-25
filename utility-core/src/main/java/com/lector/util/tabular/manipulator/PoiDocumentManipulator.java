@@ -82,7 +82,7 @@ public class PoiDocumentManipulator extends AbstractDocumentManipulator {
                 .getTabularFields()
                 .stream()
                 .peek(e -> logger.debug("Setting value for property : " + e.getPropertyDescriptor().getName()))
-                .forEach(excelField -> fromColumnToJava(row, instance, excelField));
+                .forEach(field -> fromColumnToJava(row, instance, field));
         return instance;
     }
 

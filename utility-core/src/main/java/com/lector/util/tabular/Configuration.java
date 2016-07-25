@@ -41,7 +41,7 @@ public class Configuration {
 
     public <T> TabularDocument<T> lookupForDocument(Class<T> clazz) {
         final Optional<TabularDocument<T>> document = Optional.ofNullable(tabularDocuments.get(clazz));
-        document.ifPresent(e -> logger.debug("Excel document found for class : " + clazz));
+        document.ifPresent(e -> logger.debug("Tabular document found for class : " + clazz));
         return document.orElseThrow(() -> new ModelNotFoundException("Cannot find any model for given class : " + clazz));
     }
 

@@ -35,7 +35,7 @@ public class SheetUtil {
             final Workbook workbook = new XSSFWorkbook(inputStream);
             return workbook.getSheetAt(index);
         } catch (OfficeXmlFileException|POIXMLException e){
-            throw new TabularManipulationIOException("Excel document is not compatible with given type : " + type, e);
+            throw new TabularManipulationIOException("Tabular document is not compatible with given type : " + type, e);
         } catch (IOException e){
             throw new TabularManipulationIOException("Cannot read tabular document", e);
         }
