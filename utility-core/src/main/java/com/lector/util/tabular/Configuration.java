@@ -18,10 +18,10 @@ public class Configuration {
 
     private static final Log logger = LogFactory.getLog(Configuration.class);
 
-    private Map<Class, TabularDocument> excelDocuments;
+    private Map<Class, TabularDocument> tabularDocuments;
 
     public Configuration() {
-        this.excelDocuments = new HashMap<>();
+        this.tabularDocuments = new HashMap<>();
     }
 
     public Configuration addModel(Set<Class<?>> classes) {
@@ -35,12 +35,12 @@ public class Configuration {
                 .setClass(clazz)
                 .build();
         logger.info("Adding tabular model for class : " + clazz);
-        excelDocuments.put(clazz, tabularDocument);
+        tabularDocuments.put(clazz, tabularDocument);
         return this;
     }
 
     public <T> TabularDocument<T> lookupForDocument(Class<T> clazz) {
-        final Optional<TabularDocument<T>> document = Optional.ofNullable(excelDocuments.get(clazz));
+        final Optional<TabularDocument<T>> document = Optional.ofNullable(tabularDocuments.get(clazz));
         document.ifPresent(e -> logger.debug("Excel document found for class : " + clazz));
         return document.orElseThrow(() -> new ModelNotFoundException("Cannot find any model for given class : " + clazz));
     }

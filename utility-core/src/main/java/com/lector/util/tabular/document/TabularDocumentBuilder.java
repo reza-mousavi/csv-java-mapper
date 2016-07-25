@@ -28,7 +28,7 @@ public class TabularDocumentBuilder<T> {
         }
 
         final TabularDocument<T> tabularDocument = AnnotationUtil.getTabularDocument(clazz);
-        AnnotationUtil.getTabularFields(clazz).forEach(tabularDocument::addExcelField);
+        AnnotationUtil.getTabularFields(clazz).forEach(tabularDocument::addField);
         logger.debug("------------All fields has been read -----------.");
         return tabularDocument;
     }

@@ -5,7 +5,7 @@ import com.lector.util.tabular.document.TabularField;
 import com.lector.util.tabular.util.AnnotationUtil;
 import com.lector.util.tabular.datatype.excel.CellConverter;
 import com.lector.util.tabular.document.TabularDocument;
-import com.lector.util.tabular.exception.ExcelDocumentCreationException;
+import com.lector.util.tabular.exception.TabularDocumentCreationException;
 import com.lector.util.tabular.util.RowUtil;
 import com.lector.util.tabular.util.SheetUtil;
 import org.apache.commons.logging.Log;
@@ -44,7 +44,7 @@ public class PoiDocumentManipulator extends AbstractDocumentManipulator {
     }
 
     @Override
-    public <T> List<T> read(TabularDocument<T> tabularDocument, InputStream inputStream) throws ExcelDocumentCreationException {
+    public <T> List<T> read(TabularDocument<T> tabularDocument, InputStream inputStream) throws TabularDocumentCreationException {
         final Sheet sheet = SheetUtil.getSheet(implementationType, inputStream, 0);
         return IntStream.rangeClosed(sheet.getFirstRowNum() + 1, sheet.getLastRowNum())
                 .mapToObj(sheet::getRow)

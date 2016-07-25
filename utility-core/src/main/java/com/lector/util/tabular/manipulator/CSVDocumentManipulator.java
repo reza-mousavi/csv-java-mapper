@@ -7,7 +7,7 @@ import com.lector.util.tabular.util.AnnotationUtil;
 import com.lector.util.tabular.util.SteamOperationUtil;
 import com.lector.util.tabular.datatype.csv.CSVConverter;
 import com.lector.util.tabular.document.TabularDocument;
-import com.lector.util.tabular.exception.ExcelDocumentCreationException;
+import com.lector.util.tabular.exception.TabularDocumentCreationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,7 +33,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
     }
 
     @Override
-    public <T> List<T> read(TabularDocument<T> tabularDocument, InputStream inputStream) throws ExcelDocumentCreationException {
+    public <T> List<T> read(TabularDocument<T> tabularDocument, InputStream inputStream) throws TabularDocumentCreationException {
         final List<T> result = new ArrayList<>();
         final List<String> lines = SteamOperationUtil.readLines(inputStream);
         lines.stream()
@@ -54,7 +54,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
                 .getTabularFields()
                 .stream()
                 .peek(e -> logger.debug("Setting value for property : " + e.getPropertyDescriptor().getName()))
-                .forEach(excelField -> fromStringToType(fields, instance, excelField));
+                .forEach(field -> fromStringToType(fields, instance, field));
 
         return instance;
     }

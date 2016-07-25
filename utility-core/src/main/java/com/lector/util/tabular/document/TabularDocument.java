@@ -28,7 +28,7 @@ public class TabularDocument<T> {
         return this.tabularFields;
     }
 
-    public void addExcelField(TabularField tabularField) {
+    public void addField(TabularField tabularField) {
         this.tabularFields.add(tabularField);
     }
 

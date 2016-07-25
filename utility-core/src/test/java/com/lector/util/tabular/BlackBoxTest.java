@@ -1,7 +1,7 @@
 package com.lector.util.tabular;
 
-import com.lector.util.tabular.exception.ExcelDocumentCreationException;
-import com.lector.util.tabular.exception.ExcelManipulationIOException;
+import com.lector.util.tabular.exception.TabularDocumentCreationException;
+import com.lector.util.tabular.exception.TabularManipulationIOException;
 import com.lector.util.tabular.manipulator.CSVDocumentManipulator;
 import com.lector.util.tabular.manipulator.ImplementationType;
 import com.lector.util.tabular.manipulator.PoiDocumentManipulator;
@@ -57,7 +57,7 @@ public class BlackBoxTest {
     }
 
     @Test
-    public void testWritingBooks() throws IOException, ExcelDocumentCreationException {
+    public void testWritingBooks() throws IOException, TabularDocumentCreationException {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
@@ -77,8 +77,8 @@ public class BlackBoxTest {
         assertElementsAreEqual(listOfRecords, books);
     }
 
-    @Test(expected = ExcelManipulationIOException.class)
-    public void testWritingBooksIncompatibleImplementation() throws IOException, ExcelDocumentCreationException {
+    @Test(expected = TabularManipulationIOException.class)
+    public void testWritingBooksIncompatibleImplementation() throws IOException, TabularDocumentCreationException {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
@@ -98,8 +98,8 @@ public class BlackBoxTest {
         assertElementsAreEqual(listOfRecords, books);
     }
 
-    @Test(expected = ExcelManipulationIOException.class)
-    public void testWritingBooksIncompatibleImplementation2() throws IOException, ExcelDocumentCreationException {
+    @Test(expected = TabularManipulationIOException.class)
+    public void testWritingBooksIncompatibleImplementation2() throws IOException, TabularDocumentCreationException {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
@@ -120,7 +120,7 @@ public class BlackBoxTest {
     }
 
     @Test
-    public void testWritingXssfBooks() throws IOException, ExcelDocumentCreationException {
+    public void testWritingXssfBooks() throws IOException, TabularDocumentCreationException {
         final FileOutputStream out = new FileOutputStream(TEST_XLSX);
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
@@ -141,7 +141,7 @@ public class BlackBoxTest {
     }
 
     @Test
-    public void testWritingBooksInAnotherDocument() throws IOException, ExcelDocumentCreationException {
+    public void testWritingBooksInAnotherDocument() throws IOException, TabularDocumentCreationException {
         final String fileName = "test2.xls";
         final FileOutputStream out = new FileOutputStream(fileName);
         final List<Book> listOfBooks = getListOfBooks();
@@ -163,7 +163,7 @@ public class BlackBoxTest {
     }
 
     @Test
-    public void testWritingPersons() throws IOException, ExcelDocumentCreationException {
+    public void testWritingPersons() throws IOException, TabularDocumentCreationException {
         final FileOutputStream out = new FileOutputStream(TEST_XLS);
         final List<Person> listOfRecords = getListOfPersons();
         final Configuration configuration = new Configuration()
@@ -184,7 +184,7 @@ public class BlackBoxTest {
     }
 
     @Test
-    public void testWritingBooksInCSV() throws IOException, ExcelDocumentCreationException {
+    public void testWritingBooksInCSV() throws IOException, TabularDocumentCreationException {
         final FileOutputStream out = new FileOutputStream(TEST_CSV);
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();

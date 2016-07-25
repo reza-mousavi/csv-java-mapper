@@ -1,7 +1,7 @@
 package com.lector.util.tabular.util;
 
 import com.lector.util.tabular.manipulator.ImplementationType;
-import com.lector.util.tabular.exception.ExcelManipulationIOException;
+import com.lector.util.tabular.exception.TabularManipulationIOException;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
@@ -35,9 +35,9 @@ public class SheetUtil {
             final Workbook workbook = new XSSFWorkbook(inputStream);
             return workbook.getSheetAt(index);
         } catch (OfficeXmlFileException|POIXMLException e){
-            throw new ExcelManipulationIOException("Excel document is not compatible with given type : " + type, e);
+            throw new TabularManipulationIOException("Excel document is not compatible with given type : " + type, e);
         } catch (IOException e){
-            throw new ExcelManipulationIOException("Cannot read tabular document", e);
+            throw new TabularManipulationIOException("Cannot read tabular document", e);
         }
     }
 }
