@@ -26,8 +26,8 @@ public class CellConverter {
         excelDataTypeMap = new HashMap<>();
         final Package aPackage = getClass().getPackage();
         final String packageName = aPackage.getName();
-        final Set<? extends ExcelDataType> implementors = AnnotationUtil.createImplementors(packageName, ExcelDataType.class);
-        implementors.stream()
+        AnnotationUtil.createImplementors(packageName, ExcelDataType.class)
+                .stream()
                 .peek(p -> logger.debug("Finding handler for type : " + p.getClazz()))
                 .forEach(e -> excelDataTypeMap.put(e.getClazz(), e));
     }
@@ -47,9 +47,11 @@ public class CellConverter {
 
     public <T> Optional<T> toJava(Row row, int position, Class<T> resultClass) {
         final Cell cell = row.getCell(position);
-        final ExcelDataType excelDataType = excelDataTypeMap.get(resultClass);
-        final Optional<ExcelDataType> dataTypeHandler = Optional.of(excelDataType);
-        return dataTypeHandler.map(e -> e.toJava(cell)).orElseThrow(() -> new RuntimeException("Cannot find any handler for given type"));
+        final ExcelDataType<T> excelDataType = excelDataTypeMap.get(resultClass);
+        final Optional<ExcelDataType<T>> dataTypeHandler = Optional.of(excelDataType);
+        return dataTypeHandler
+                .map(e -> e.toJava(cell))
+                .orElseThrow(() -> new RuntimeException("Cannot find any handler for given type"));
     }
 
     //Handle null values plus handle unknown classes values ...

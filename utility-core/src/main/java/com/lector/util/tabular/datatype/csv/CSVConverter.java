@@ -21,8 +21,9 @@ public class CSVConverter {
         csvDataTypeMap = new HashMap<>();
         final Package aPackage = getClass().getPackage();
         final String packageName = aPackage.getName();
-        final Set<? extends CSVDataType> implementors = AnnotationUtil.createImplementors(packageName, CSVDataType.class);
-        implementors.stream().forEach(e -> csvDataTypeMap.put(e.getClazz(), e));
+        AnnotationUtil
+                .createImplementors(packageName, CSVDataType.class)
+                .stream().forEach(e -> csvDataTypeMap.put(e.getClazz(), e));
     }
 
     public <T> String fromJava(T value) {
