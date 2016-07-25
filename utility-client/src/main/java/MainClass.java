@@ -1,9 +1,9 @@
-import com.lector.util.excel.Book;
-import com.lector.util.excel.Configuration;
-import com.lector.util.excel.TabularDocumentWriter;
-import com.lector.util.excel.annotation.Row;
-import com.lector.util.excel.manipulator.CSVDocumentManipulator;
-import com.lector.util.excel.util.AnnotationUtil;
+import com.lector.util.tabular.Book;
+import com.lector.util.tabular.Configuration;
+import com.lector.util.tabular.TabularDocumentWriter;
+import com.lector.util.tabular.annotation.Row;
+import com.lector.util.tabular.manipulator.CSVDocumentManipulator;
+import com.lector.util.tabular.util.AnnotationUtil;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public class MainClass {
                     .write(Book.class, listOfRecords);
             out.close();
         } catch (IOException e) {
-            throw new RuntimeException("Cannot create excel result for file : " + outputPath, e);
+            throw new RuntimeException("Cannot create tabular result for file : " + outputPath, e);
         }
     }
 
