@@ -12,8 +12,8 @@ public class ExcelField {
     private String name;
     private PropertyDescriptor propertyDescriptor;
 
-    public ExcelField(String name, Field field, PropertyDescriptor propertyDescriptor) {
-        this.position = field.position();
+    public ExcelField(String name, int position, PropertyDescriptor propertyDescriptor) {
+        this.position = position;
         this.name = name;
         this.propertyDescriptor = propertyDescriptor;
     }

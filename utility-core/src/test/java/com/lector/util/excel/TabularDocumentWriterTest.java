@@ -25,9 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.lector.util.excel.manipulator.ImplementationType.HSSF;
 
@@ -139,7 +137,7 @@ public class TabularDocumentWriterTest {
         for (int rowIndex = 0; rowIndex < records.size(); rowIndex++) {
             final T record = records.get(rowIndex);
             final org.apache.poi.ss.usermodel.Row row = sheet.getRow(rowIndex + headerRowNumber);
-            final List<ExcelField> fields = AnnotationUtil.getFields(clazz);
+            final Collection<ExcelField> fields = AnnotationUtil.getTabularFields(clazz);
             for (ExcelField field : fields) {
                 final PropertyDescriptor propertyDescriptor = field.getPropertyDescriptor();
                 final Class<?> propertyType = propertyDescriptor.getPropertyType();
@@ -158,7 +156,7 @@ public class TabularDocumentWriterTest {
         final Sheet sheet = getSheet(path);
         final org.apache.poi.ss.usermodel.Row row = sheet.getRow(0);
 
-        final List<ExcelField> excelFields = AnnotationUtil.getFields(clazz);
+        final Collection<ExcelField> excelFields = AnnotationUtil.getTabularFields(clazz);
         for (ExcelField excelField : excelFields) {
             assertCreatedCell(row, excelField.getName(), excelField.getPosition());
         }

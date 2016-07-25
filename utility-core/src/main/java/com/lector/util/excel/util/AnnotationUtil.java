@@ -2,6 +2,9 @@ package com.lector.util.excel.util;
 
 import com.lector.util.excel.annotation.Field;
 import com.lector.util.excel.document.ExcelField;
+import com.lector.util.excel.document.ExcelRow;
+import com.lector.util.excel.document.TabularDocument;
+import com.lector.util.excel.exception.NoModelException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,11 +17,11 @@ import org.springframework.util.ReflectionUtils;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/7/2016
@@ -27,23 +30,34 @@ public class AnnotationUtil {
 
     private static final Log logger =  LogFactory.getLog(AnnotationUtil.class);
 
+    public static <T> TabularDocument<T> getTabularDocument(Class<T> clazz) {
+        return Optional.ofNullable(clazz)
+                .map(ExcelRow::new)
+                .map(TabularDocument::new)
+                .orElseThrow(() ->
+                        new NoModelException(
+                                "Class : " + clazz.getName() + " is not a valid model. " +
+                                        "It should have the annotation <Row> over it."));
+    }
+
+    public static <T> Collection<ExcelField> getTabularFields(Class<T> clazz) {
+        return Stream.of(PropertyUtils.getPropertyDescriptors(clazz))
+                .filter(AnnotationUtil::hasFieldAnnotation)
+                .map(AnnotationUtil::getTabularField)
+                .collect(Collectors.toSet());
+    }
+
+    private static ExcelField getTabularField(PropertyDescriptor propertyDescriptor) {
+        final Method readMethod = propertyDescriptor.getReadMethod();
+        final Field annotation = readMethod.getAnnotation(Field.class);
+        final String fieldName = AnnotationUtil.getFieldName(annotation, propertyDescriptor);
+        final int position = annotation.position();
+        return new ExcelField(fieldName, position, propertyDescriptor);
+    }
+
     public static String getFieldName(Field field, PropertyDescriptor propertyDescriptor) {
         final Optional<String> result = Optional.of(field.name());
         return result.filter(e -> !e.equals("")).orElse(propertyDescriptor.getName());
-    }
-
-    public static <T> List<ExcelField> getFields(Class<T> clazz) {
-        final List<ExcelField> fields = new ArrayList<>();
-        final PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
-        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-            final Method readMethod = propertyDescriptor.getReadMethod();
-            final Field annotation = readMethod.getAnnotation(Field.class);
-            if (annotation != null) {
-                final String fieldName = AnnotationUtil.getFieldName(annotation, propertyDescriptor);
-                fields.add(new ExcelField(fieldName, annotation, propertyDescriptor));
-            }
-        }
-        return fields;
     }
 
     public static <T> void setPropertyValue(T instance, T fieldValue, PropertyDescriptor propertyDescriptor) {
@@ -102,5 +116,20 @@ public class AnnotationUtil {
             return null;
         }
     }
+
+    public static boolean hasFieldAnnotation(PropertyDescriptor propertyDescriptor) {
+        return hasReadMethod(propertyDescriptor) && hasAnnotation(propertyDescriptor, Field.class);
+    }
+
+    private static <T extends Annotation> boolean hasAnnotation(PropertyDescriptor propertyDescriptor, Class<T> annotationClass) {
+        final Method readMethod = propertyDescriptor.getReadMethod();
+        return readMethod.getAnnotation(annotationClass) != null;
+    }
+
+    private static boolean hasReadMethod(PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.getReadMethod() != null;
+    }
+
+
 
 }
