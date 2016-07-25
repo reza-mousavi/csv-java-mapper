@@ -47,9 +47,11 @@ public class StringConverter {
 
     public <T> Optional<T> toJava(Row row, int position, Class<T> resultClass) {
         final Cell cell = row.getCell(position);
-        final ExcelDataType excelDataType = excelDataTypeMap.get(resultClass);
-        final Optional<ExcelDataType> dataTypeHandler = Optional.of(excelDataType);
-        return dataTypeHandler.map(e -> e.toJava(cell)).orElseThrow(() -> new RuntimeException("Cannot find any handler for given type"));
+        final ExcelDataType<T> excelDataType = excelDataTypeMap.get(resultClass);
+        final Optional<ExcelDataType<T>> dataTypeHandler = Optional.of(excelDataType);
+        return dataTypeHandler
+                .map(e -> e.toJava(cell))
+                .orElseThrow(() -> new RuntimeException("Cannot find any handler for given type"));
     }
 
     //Handle null values plus handle unknown classes values ...

@@ -1,8 +1,7 @@
 package com.lector.util.excel.manipulator;
 
 import com.lector.util.excel.AbstractDocumentManipulator;
-import com.lector.util.excel.DocumentManipulator;
-import com.lector.util.excel.document.ExcelField;
+import com.lector.util.excel.document.TabularField;
 import com.lector.util.excel.exception.InvalidCSVRowException;
 import com.lector.util.excel.util.AnnotationUtil;
 import com.lector.util.excel.util.SteamOperationUtil;
@@ -52,7 +51,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
         }
         final String[] fields = line.split(COMMA, Integer.MAX_VALUE);
         tabularDocument
-                .getExcelFields()
+                .getTabularFields()
                 .stream()
                 .peek(e -> logger.debug("Setting value for property : " + e.getPropertyDescriptor().getName()))
                 .forEach(excelField -> fromStringToType(fields, instance, excelField));
@@ -70,28 +69,28 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
                 .forEach(p -> SteamOperationUtil.writeLine(outputStream, p));
     }
 
-    private <T> void fromStringToType(String[] fields, T instance, ExcelField excelField) {
-        final Optional<Object> fieldValue = extractValue(excelField, fields);
-        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
+    private <T> void fromStringToType(String[] fields, T instance, TabularField tabularField) {
+        final Optional<Object> fieldValue = extractValue(tabularField, fields);
+        final PropertyDescriptor propertyDescriptor = tabularField.getPropertyDescriptor();
         fieldValue.ifPresent(e -> AnnotationUtil.setPropertyValue(instance, e, propertyDescriptor));
     }
 
 
-    private <T> Optional<T> extractValue(ExcelField excelField, String[] fields) {
-        final int position = excelField.getPosition();
+    private <T> Optional<T> extractValue(TabularField tabularField, String[] fields) {
+        final int position = tabularField.getPosition();
         int actualPosition = position -1;
         if (fields.length <= actualPosition) {
             throw new InvalidCSVRowException("Invalid row exception, expected column at : " + actualPosition);
         }
         final String value = fields[actualPosition];
-        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
+        final PropertyDescriptor propertyDescriptor = tabularField.getPropertyDescriptor();
         final Class<?> propertyType = propertyDescriptor.getPropertyType();
         return cSVConverter.toJava(value, (Class<T>) propertyType);
     }
 
     public <T> String writeHeader(TabularDocument<T> tabularDocument) {
-        final List<ExcelField> fieldsList = new ArrayList<>();
-        tabularDocument.getExcelFields()
+        final List<TabularField> fieldsList = new ArrayList<>();
+        tabularDocument.getTabularFields()
                 .stream()
                 .forEach(element -> placeInTheList(fieldsList, element, element.getPosition()));
         final String result = fieldsList.stream()
@@ -102,8 +101,8 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
     }
 
     public <T> String toString(TabularDocument<T> tabularDocument, T record) {
-        final List<ExcelField> fieldsList = new ArrayList<>();
-        tabularDocument.getExcelFields()
+        final List<TabularField> fieldsList = new ArrayList<>();
+        tabularDocument.getTabularFields()
                 .stream()
                 .forEach(element -> placeInTheList(fieldsList, element, element.getPosition()));
         final String result = fieldsList.stream()
@@ -120,10 +119,10 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
         list.add(actualPosition, element);
     }
 
-    private <T> String fromTypeToString(T record, ExcelField excelField) {
-        final Optional<ExcelField> field = Optional.ofNullable(excelField);
+    private <T> String fromTypeToString(T record, TabularField tabularField) {
+        final Optional<TabularField> field = Optional.ofNullable(tabularField);
         if (!field.isPresent()) return "";
-        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
+        final PropertyDescriptor propertyDescriptor = tabularField.getPropertyDescriptor();
         final T value = AnnotationUtil.getPropertyValue(record, propertyDescriptor);
         logger.debug("Value for property is : " + value);
         return cSVConverter.fromJava(value);

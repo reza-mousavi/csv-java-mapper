@@ -9,13 +9,13 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Created by Reza Mousavi reza.mousavi@lector.dk on 7/5/2016
  */
-public class ExcelDocumentBuilder<T> {
+public class TabularDocumentBuilder<T> {
 
-    private static final Log logger = LogFactory.getLog(ExcelDocumentBuilder.class);
+    private static final Log logger = LogFactory.getLog(TabularDocumentBuilder.class);
 
     private Class<T> clazz;
 
-    public ExcelDocumentBuilder setClass(Class<T> clazz) {
+    public TabularDocumentBuilder setClass(Class<T> clazz) {
         this.clazz = clazz;
         return this;
     }

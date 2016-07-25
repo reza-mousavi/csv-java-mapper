@@ -1,6 +1,6 @@
 package com.lector.util.excel.manipulator;
 
-import com.lector.util.excel.document.ExcelDocumentBuilder;
+import com.lector.util.excel.document.TabularDocumentBuilder;
 import com.lector.util.excel.document.TabularDocument;
 import com.lector.util.excel.exception.InvalidCSVRowException;
 import com.lector.util.excel.model.Book;
@@ -19,9 +19,9 @@ public class CSVDocumentManipulatorTest {
     @Before
     public void setUp() throws Exception {
         manipulator = new CSVDocumentManipulator();
-        final ExcelDocumentBuilder<Book> excelDocumentBuilder = new ExcelDocumentBuilder<>();
-        excelDocumentBuilder.setClass(Book.class);
-        tabularDocumentOfBook = excelDocumentBuilder.build();
+        final TabularDocumentBuilder<Book> tabularDocumentBuilder = new TabularDocumentBuilder<>();
+        tabularDocumentBuilder.setClass(Book.class);
+        tabularDocumentOfBook = tabularDocumentBuilder.build();
     }
 
     @Test(expected = InvalidCSVRowException.class)

@@ -1,8 +1,7 @@
 package com.lector.util.excel.manipulator;
 
 import com.lector.util.excel.AbstractDocumentManipulator;
-import com.lector.util.excel.DocumentManipulator;
-import com.lector.util.excel.document.ExcelField;
+import com.lector.util.excel.document.TabularField;
 import com.lector.util.excel.util.AnnotationUtil;
 import com.lector.util.excel.datatype.excel.CellConverter;
 import com.lector.util.excel.document.TabularDocument;
@@ -19,7 +18,6 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -58,7 +56,7 @@ public class PoiDocumentManipulator extends AbstractDocumentManipulator {
 
     @Override
     public <T> void write(TabularDocument<T> tabularDocument, boolean createHeader, List<T> elements, OutputStream outputStream) {
-        final String sheetName = tabularDocument.getExcelRow().getName();
+        final String sheetName = tabularDocument.getTabularRow().getName();
         final Sheet sheet = SheetUtil.createSheet(implementationType, sheetName);
 
         try {
@@ -81,7 +79,7 @@ public class PoiDocumentManipulator extends AbstractDocumentManipulator {
     public <T> T fromRow(Row row, TabularDocument<T> tabularDocument) {
         final T instance = tabularDocument.newInstance();
         tabularDocument
-                .getExcelFields()
+                .getTabularFields()
                 .stream()
                 .peek(e -> logger.debug("Setting value for property : " + e.getPropertyDescriptor().getName()))
                 .forEach(excelField -> fromColumnToJava(row, instance, excelField));
@@ -90,7 +88,7 @@ public class PoiDocumentManipulator extends AbstractDocumentManipulator {
 
     public <T> Row toHeaderRow(TabularDocument<T> tabularDocument, Sheet sheet) {
         final Row header = RowUtil.createRow(sheet);
-        final Set<ExcelField> fieldsStructure = tabularDocument.getExcelFields();
+        final Set<TabularField> fieldsStructure = tabularDocument.getTabularFields();
         fieldsStructure
                 .stream()
                 .peek(e -> logger.debug("\t\tMethod found for property : " + e.getPropertyDescriptor().getName()))
@@ -101,28 +99,28 @@ public class PoiDocumentManipulator extends AbstractDocumentManipulator {
     public <T> Row toRow(TabularDocument<T> tabularDocument, T record, Sheet sheet) {
         final Row row = RowUtil.createRow(sheet);
         tabularDocument
-                .getExcelFields()
+                .getTabularFields()
                 .stream()
                 .forEach(e -> fromJavaToColumn(record, row, e));
         return row;
     }
 
-    private <T> void fromColumnToJava(Row row, T instance, ExcelField excelField) {
-        final Optional<Object> fieldValue = extractValue(excelField, row);
-        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
+    private <T> void fromColumnToJava(Row row, T instance, TabularField tabularField) {
+        final Optional<Object> fieldValue = extractValue(tabularField, row);
+        final PropertyDescriptor propertyDescriptor = tabularField.getPropertyDescriptor();
         fieldValue.ifPresent(e -> AnnotationUtil.setPropertyValue(instance, e, propertyDescriptor));
     }
 
-    private <T> Optional<T> extractValue(ExcelField excelField, Row row) {
-        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
+    private <T> Optional<T> extractValue(TabularField tabularField, Row row) {
+        final PropertyDescriptor propertyDescriptor = tabularField.getPropertyDescriptor();
         final Class<?> propertyType = propertyDescriptor.getPropertyType();
-        final int position = excelField.getPosition();
+        final int position = tabularField.getPosition();
         return cellConverter.toJava(row, position, (Class<T>) propertyType);
     }
 
-    private <T> void fromJavaToColumn(T record, Row row, ExcelField excelField) {
-        final PropertyDescriptor propertyDescriptor = excelField.getPropertyDescriptor();
-        final int position = excelField.getPosition();
+    private <T> void fromJavaToColumn(T record, Row row, TabularField tabularField) {
+        final PropertyDescriptor propertyDescriptor = tabularField.getPropertyDescriptor();
+        final int position = tabularField.getPosition();
         final T value = AnnotationUtil.getPropertyValue(record, propertyDescriptor);
         logger.debug("Value for property is : " + value);
         Optional.ofNullable(value)

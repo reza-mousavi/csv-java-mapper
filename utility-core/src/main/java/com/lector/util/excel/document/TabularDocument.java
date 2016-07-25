@@ -11,30 +11,30 @@ public class TabularDocument<T> {
 
     public static TabularDocument<Object> EMPTY = new TabularDocument<>(null);
 
-    private ExcelRow<T> excelRow;
+    private TabularRow<T> tabularRow;
 
-    private SortedSet<ExcelField> excelFields;
+    private SortedSet<TabularField> tabularFields;
 
-    public TabularDocument(ExcelRow<T> excelRow) {
-        this.excelRow = excelRow;
-        this.excelFields = new TreeSet<>(Comparator.comparing(ExcelField::getPosition));
+    public TabularDocument(TabularRow<T> tabularRow) {
+        this.tabularRow = tabularRow;
+        this.tabularFields = new TreeSet<>(Comparator.comparing(TabularField::getPosition));
     }
 
-    public ExcelRow<T> getExcelRow() {
-        return this.excelRow;
+    public TabularRow<T> getTabularRow() {
+        return this.tabularRow;
     }
 
-    public Set<ExcelField> getExcelFields() {
-        return this.excelFields;
+    public Set<TabularField> getTabularFields() {
+        return this.tabularFields;
     }
 
-    public void addExcelField(ExcelField excelField) {
-        this.excelFields.add(excelField);
+    public void addExcelField(TabularField tabularField) {
+        this.tabularFields.add(tabularField);
     }
 
     public T newInstance() {
-        final ExcelRow<T> excelRow = getExcelRow();
-        final Class<T> clazz = excelRow.getClazz();
+        final TabularRow<T> tabularRow = getTabularRow();
+        final Class<T> clazz = tabularRow.getClazz();
         return AnnotationUtil.createNewInstance(clazz);
     }
 

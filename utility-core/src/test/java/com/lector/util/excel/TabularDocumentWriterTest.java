@@ -2,7 +2,7 @@ package com.lector.util.excel;
 
 import com.lector.util.excel.util.AnnotationUtil;
 import com.lector.util.excel.annotation.Row;
-import com.lector.util.excel.document.ExcelField;
+import com.lector.util.excel.document.TabularField;
 import com.lector.util.excel.exception.NoModelException;
 import com.lector.util.excel.datatype.excel.CellConverter;
 import com.lector.util.excel.manipulator.PoiDocumentManipulator;
@@ -137,8 +137,8 @@ public class TabularDocumentWriterTest {
         for (int rowIndex = 0; rowIndex < records.size(); rowIndex++) {
             final T record = records.get(rowIndex);
             final org.apache.poi.ss.usermodel.Row row = sheet.getRow(rowIndex + headerRowNumber);
-            final Collection<ExcelField> fields = AnnotationUtil.getTabularFields(clazz);
-            for (ExcelField field : fields) {
+            final Collection<TabularField> fields = AnnotationUtil.getTabularFields(clazz);
+            for (TabularField field : fields) {
                 final PropertyDescriptor propertyDescriptor = field.getPropertyDescriptor();
                 final Class<?> propertyType = propertyDescriptor.getPropertyType();
                 final int position = field.getPosition();
@@ -156,9 +156,9 @@ public class TabularDocumentWriterTest {
         final Sheet sheet = getSheet(path);
         final org.apache.poi.ss.usermodel.Row row = sheet.getRow(0);
 
-        final Collection<ExcelField> excelFields = AnnotationUtil.getTabularFields(clazz);
-        for (ExcelField excelField : excelFields) {
-            assertCreatedCell(row, excelField.getName(), excelField.getPosition());
+        final Collection<TabularField> tabularFields = AnnotationUtil.getTabularFields(clazz);
+        for (TabularField tabularField : tabularFields) {
+            assertCreatedCell(row, tabularField.getName(), tabularField.getPosition());
         }
     }
 

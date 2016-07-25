@@ -1,6 +1,6 @@
 package com.lector.util.excel;
 
-import com.lector.util.excel.document.ExcelDocumentBuilder;
+import com.lector.util.excel.document.TabularDocumentBuilder;
 import com.lector.util.excel.document.TabularDocument;
 import com.lector.util.excel.exception.ModelNotFoundException;
 import org.apache.commons.logging.Log;
@@ -31,7 +31,7 @@ public class Configuration {
     }
 
     public <T> Configuration addModel(Class<T> clazz) {
-        final TabularDocument tabularDocument = new ExcelDocumentBuilder<T>()
+        final TabularDocument tabularDocument = new TabularDocumentBuilder<T>()
                 .setClass(clazz)
                 .build();
         logger.info("Adding excel model for class : " + clazz);
@@ -40,7 +40,7 @@ public class Configuration {
     }
 
     public <T> TabularDocument<T> lookupForDocument(Class<T> clazz) {
-        final Optional<TabularDocument> document = Optional.ofNullable(excelDocuments.get(clazz));
+        final Optional<TabularDocument<T>> document = Optional.ofNullable(excelDocuments.get(clazz));
         document.ifPresent(e -> logger.debug("Excel document found for class : " + clazz));
         return document.orElseThrow(() -> new ModelNotFoundException("Cannot find any model for given class : " + clazz));
     }

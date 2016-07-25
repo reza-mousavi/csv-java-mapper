@@ -1,6 +1,6 @@
 package com.lector.util.excel.util;
 
-import com.lector.util.excel.document.ExcelDocumentBuilder;
+import com.lector.util.excel.document.TabularDocumentBuilder;
 import com.lector.util.excel.document.TabularDocument;
 import com.lector.util.excel.model.Book;
 import com.lector.util.excel.model.Person;
@@ -14,18 +14,18 @@ public class TabularDocumentUtilTest {
 
     @Test
     public void testMaximumPosition(){
-        TabularDocument document = new ExcelDocumentBuilder<Person>()
+        TabularDocument document = new TabularDocumentBuilder<Person>()
                 .setClass(Person.class)
                 .build();
         Assert.assertNotEquals(null, document);
-        Assert.assertNotEquals(null, document.getExcelFields());
+        Assert.assertNotEquals(null, document.getTabularFields());
         Assert.assertEquals(5, TabularDocumentUtil.getMaximumPosition(document));
 
-        document = new ExcelDocumentBuilder<Book>()
+        document = new TabularDocumentBuilder<Book>()
                 .setClass(Book.class)
                 .build();
         Assert.assertNotEquals(null, document);
-        Assert.assertNotEquals(null, document.getExcelFields());
+        Assert.assertNotEquals(null, document.getTabularFields());
         Assert.assertEquals(9, TabularDocumentUtil.getMaximumPosition(document));
     }
 }

@@ -1,8 +1,8 @@
 package com.lector.util.excel.util;
 
 import com.lector.util.excel.annotation.Field;
-import com.lector.util.excel.document.ExcelField;
-import com.lector.util.excel.document.ExcelRow;
+import com.lector.util.excel.document.TabularField;
+import com.lector.util.excel.document.TabularRow;
 import com.lector.util.excel.document.TabularDocument;
 import com.lector.util.excel.exception.NoModelException;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -32,7 +32,7 @@ public class AnnotationUtil {
 
     public static <T> TabularDocument<T> getTabularDocument(Class<T> clazz) {
         return Optional.ofNullable(clazz)
-                .map(ExcelRow::new)
+                .map(TabularRow::new)
                 .map(TabularDocument::new)
                 .orElseThrow(() ->
                         new NoModelException(
@@ -40,19 +40,19 @@ public class AnnotationUtil {
                                         "It should have the annotation <Row> over it."));
     }
 
-    public static <T> Collection<ExcelField> getTabularFields(Class<T> clazz) {
+    public static <T> Collection<TabularField> getTabularFields(Class<T> clazz) {
         return Stream.of(PropertyUtils.getPropertyDescriptors(clazz))
                 .filter(AnnotationUtil::hasFieldAnnotation)
                 .map(AnnotationUtil::getTabularField)
                 .collect(Collectors.toSet());
     }
 
-    private static ExcelField getTabularField(PropertyDescriptor propertyDescriptor) {
+    private static TabularField getTabularField(PropertyDescriptor propertyDescriptor) {
         final Method readMethod = propertyDescriptor.getReadMethod();
         final Field annotation = readMethod.getAnnotation(Field.class);
         final String fieldName = AnnotationUtil.getFieldName(annotation, propertyDescriptor);
         final int position = annotation.position();
-        return new ExcelField(fieldName, position, propertyDescriptor);
+        return new TabularField(fieldName, position, propertyDescriptor);
     }
 
     public static String getFieldName(Field field, PropertyDescriptor propertyDescriptor) {

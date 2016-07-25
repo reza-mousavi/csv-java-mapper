@@ -1,6 +1,6 @@
 package com.lector.util.excel.util;
 
-import com.lector.util.excel.document.ExcelField;
+import com.lector.util.excel.document.TabularField;
 import com.lector.util.excel.document.TabularDocument;
 
 /**
@@ -10,9 +10,9 @@ public class TabularDocumentUtil {
 
     public static  <T> int getMaximumPosition(TabularDocument<T> tabularDocument) {
         return tabularDocument
-                .getExcelFields()
+                .getTabularFields()
                 .stream()
-                .mapToInt(ExcelField::getPosition)
+                .mapToInt(TabularField::getPosition)
                 .max().orElse(0);
     }
 
