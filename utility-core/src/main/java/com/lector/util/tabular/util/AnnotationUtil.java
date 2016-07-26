@@ -1,6 +1,7 @@
 package com.lector.util.tabular.util;
 
 import com.lector.util.tabular.annotation.Field;
+import com.lector.util.tabular.annotation.Row;
 import com.lector.util.tabular.document.TabularField;
 import com.lector.util.tabular.document.TabularRow;
 import com.lector.util.tabular.document.TabularDocument;
@@ -28,16 +29,21 @@ import java.util.stream.Stream;
  */
 public class AnnotationUtil {
 
-    private static final Log logger =  LogFactory.getLog(AnnotationUtil.class);
+    private static final Log logger = LogFactory.getLog(AnnotationUtil.class);
 
     public static <T> TabularDocument<T> getTabularDocument(Class<T> clazz) {
-        return Optional.ofNullable(clazz)
-                .map(TabularRow::new)
-                .map(TabularDocument::new)
+        Optional.of(clazz)
+                .map(e -> e.getAnnotation(Row.class))
                 .orElseThrow(() ->
                         new NoModelException(
                                 "Class : " + clazz.getName() + " is not a valid model. " +
-                                        "It should have the annotation <Row> over it."));
+                                        "It should have the annotation <Row> over it."
+                        ));
+        return Optional.of(clazz)
+                .map(TabularRow::new)
+                .map(TabularDocument::new)
+                .orElseThrow(() ->
+                        new NoModelException("Cannot create model for given class" + clazz));
     }
 
     public static <T> Collection<TabularField> getTabularFields(Class<T> clazz) {
@@ -79,7 +85,7 @@ public class AnnotationUtil {
         final Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(annotation);
         typesAnnotatedWith
                 .stream()
-                .map(s-> "Annotated model found -> <" + s.getName() + ">.")
+                .map(s -> "Annotated model found -> <" + s.getName() + ">.")
                 .forEach(logger::info);
         logger.debug("Searching has finished.");
         return typesAnnotatedWith;
@@ -103,7 +109,7 @@ public class AnnotationUtil {
         final Set<Class<? extends T>> implementations = reflections.getSubTypesOf(type);
         implementations
                 .stream()
-                .map(s-> "Implementor found -> <" + s.getName() + ">.")
+                .map(s -> "Implementor found -> <" + s.getName() + ">.")
                 .forEach(logger::info);
         logger.debug("Searching has finished.");
         return implementations;
@@ -112,12 +118,12 @@ public class AnnotationUtil {
     public static <T> T createNewInstance(Class<T> clazz) {
         try {
             return clazz.newInstance();
-        } catch (InstantiationException|IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             return null;
         }
     }
 
-    public static boolean hasFieldAnnotation(PropertyDescriptor propertyDescriptor) {
+    private static boolean hasFieldAnnotation(PropertyDescriptor propertyDescriptor) {
         return hasReadMethod(propertyDescriptor) && hasAnnotation(propertyDescriptor, Field.class);
     }
 
@@ -129,7 +135,6 @@ public class AnnotationUtil {
     private static boolean hasReadMethod(PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.getReadMethod() != null;
     }
-
 
 
 }
