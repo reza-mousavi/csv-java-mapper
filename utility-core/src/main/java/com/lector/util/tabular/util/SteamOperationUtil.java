@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class SteamOperationUtil {
 
-    public static final String UTF_8 = "utf-8";
+    private static final String UTF_8 = "utf-8";
 
     public static List<String> readLines(InputStream inputStream){
         final List<String> strings = new ArrayList<>();
@@ -22,7 +22,7 @@ public class SteamOperationUtil {
             }
             return strings;
         } catch (IOException e) {
-            throw new RuntimeException("Cannot read from stream.");
+            throw new RuntimeException("Cannot read from stream.", e);
         }
     }
 
@@ -34,7 +34,7 @@ public class SteamOperationUtil {
                 bufferedWriter.write(line);
             }
         } catch (IOException e){
-            throw new RuntimeException("Cannot write into stream.");
+            throw new RuntimeException("Cannot write into stream.", e);
         }
     }
 
@@ -43,7 +43,7 @@ public class SteamOperationUtil {
             outputStream.write(getUtfBytes(line));
             outputStream.write(getUtfBytes("\r\n"));
         } catch (IOException e){
-            throw new RuntimeException("Cannot write into stream.");
+            throw new RuntimeException("Cannot write into stream.", e);
         }
     }
 

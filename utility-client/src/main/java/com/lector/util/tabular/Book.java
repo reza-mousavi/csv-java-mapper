@@ -87,7 +87,7 @@ public class Book implements Serializable{
         this.isbn = isbn;
     }
 
-    @Field(position = 10)
+    //@Field(position = 10)
     public Double getLength() {
         return length;
     }

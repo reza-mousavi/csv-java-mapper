@@ -55,7 +55,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
     public <R> R fromString(String line, TabularDocument<R> tabularDocument) {
         final R instance = tabularDocument.newInstance();
         if (line == null) {
-            throw new InvalidCSVRowException("Row cannot be empty : '" + line + "'.");
+            throw new InvalidCSVRowException("Row cannot be null.");
         }
         final String[] fields = line.split(fieldSeparator, Integer.MAX_VALUE);
         tabularDocument
@@ -86,7 +86,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
 
     private <T> Optional<T> extractValue(TabularField tabularField, String[] fields) {
         final int position = tabularField.getPosition();
-        int actualPosition = position -1;
+        int actualPosition = position - 1;
         if (fields.length <= actualPosition) {
             throw new InvalidCSVRowException("Invalid row exception, expected column at : " + actualPosition);
         }
@@ -102,9 +102,10 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
                 .stream()
                 .forEach(element -> placeInTheList(fieldsList, element, element.getPosition()));
         final String result = fieldsList.stream()
-                .map(e->e != null ? e.getName() : "")
+                .map(e -> e != null ? e.getName() : "")
+                .map(e -> "\"" + e + "\"")
                 .collect(Collectors.joining(fieldSeparator));
-        logger.debug("Result is : "+ result);
+        logger.debug("Result is : " + result);
         return result;
     }
 
@@ -116,7 +117,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
         final String result = fieldsList.stream()
                 .map(ef -> fromTypeToString(record, ef))
                 .collect(Collectors.joining(fieldSeparator));
-        logger.debug("Result is : "+ result);
+        logger.debug("Result is : " + result);
         return result;
     }
 

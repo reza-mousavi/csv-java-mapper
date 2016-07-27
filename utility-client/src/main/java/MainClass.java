@@ -34,7 +34,7 @@ public class MainClass {
             }
             final FileOutputStream out = new FileOutputStream(outputFile);
             final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
-            manipulator.setFieldSeparator("RZA");
+            manipulator.setFieldSeparator(",");
             new TabularDocumentWriter()
                     .setCreateHeader(true)
                     .setConfiguration(MainClass::createConfiguration)
