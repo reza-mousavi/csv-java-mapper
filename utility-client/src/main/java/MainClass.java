@@ -26,17 +26,19 @@ public class MainClass {
     public static void main(String[] args) {
         final List<Book> listOfRecords = getListOfRecords();
 
-        final String outputPath = "C:\\users\\REM\\Desktop\\11.xlsx";
+        final String outputPath = "C:\\users\\REM\\Desktop\\11.csv";
         try {
             final File outputFile = new File(outputPath);
             if (!outputFile.exists()) {
                 outputFile.createNewFile();
             }
             final FileOutputStream out = new FileOutputStream(outputFile);
+            final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+            manipulator.setFieldSeparator("RZA");
             new TabularDocumentWriter()
                     .setCreateHeader(true)
                     .setConfiguration(MainClass::createConfiguration)
-                    .setDocumentManipulator(new CSVDocumentManipulator())
+                    .setDocumentManipulator(manipulator)
                     .setOutputStream(out)
                     .write(Book.class, listOfRecords);
             out.close();

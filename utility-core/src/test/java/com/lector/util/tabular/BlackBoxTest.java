@@ -189,16 +189,18 @@ public class BlackBoxTest {
         final List<Book> listOfRecords = getListOfBooks();
         final Configuration configuration = new Configuration();
         configuration.addModel(Book.class);
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator(",");
         new TabularDocumentWriter()
                 .setConfiguration(configuration)
-                .setDocumentManipulator(new CSVDocumentManipulator())
+                .setDocumentManipulator(manipulator)
                 .setOutputStream(out)
                 .write(Book.class, listOfRecords);
         out.close();
         final FileInputStream inputStream = new FileInputStream(TEST_CSV);
         final List<Book> books = new TabularDocumentReader()
                 .setConfiguration(configuration)
-                .setDocumentManipulator(new CSVDocumentManipulator())
+                .setDocumentManipulator(manipulator)
                 .setInputStream(inputStream)
                 .read(Book.class);
         assertElementsAreEqual(listOfRecords, books);

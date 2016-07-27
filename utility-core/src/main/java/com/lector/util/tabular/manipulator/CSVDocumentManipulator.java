@@ -24,9 +24,17 @@ import java.util.stream.IntStream;
 public class CSVDocumentManipulator extends AbstractDocumentManipulator {
 
     private static final Log logger = LogFactory.getLog(CSVDocumentManipulator.class);
-    private static final String COMMA = ",";
 
+    private String fieldSeparator;
     private CSVConverter cSVConverter;
+
+    public String getFieldSeparator() {
+        return fieldSeparator;
+    }
+
+    public void setFieldSeparator(String separator) {
+        this.fieldSeparator = separator;
+    }
 
     public CSVDocumentManipulator() {
         cSVConverter = new CSVConverter();
@@ -49,7 +57,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
         if (line == null) {
             throw new InvalidCSVRowException("Row cannot be empty : '" + line + "'.");
         }
-        final String[] fields = line.split(COMMA, Integer.MAX_VALUE);
+        final String[] fields = line.split(fieldSeparator, Integer.MAX_VALUE);
         tabularDocument
                 .getTabularFields()
                 .stream()
@@ -95,7 +103,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
                 .forEach(element -> placeInTheList(fieldsList, element, element.getPosition()));
         final String result = fieldsList.stream()
                 .map(e->e != null ? e.getName() : "")
-                .collect(Collectors.joining(COMMA));
+                .collect(Collectors.joining(fieldSeparator));
         logger.debug("Result is : "+ result);
         return result;
     }
@@ -107,7 +115,7 @@ public class CSVDocumentManipulator extends AbstractDocumentManipulator {
                 .forEach(element -> placeInTheList(fieldsList, element, element.getPosition()));
         final String result = fieldsList.stream()
                 .map(ef -> fromTypeToString(record, ef))
-                .collect(Collectors.joining(COMMA));
+                .collect(Collectors.joining(fieldSeparator));
         logger.debug("Result is : "+ result);
         return result;
     }

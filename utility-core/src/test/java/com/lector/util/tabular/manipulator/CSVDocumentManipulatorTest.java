@@ -13,37 +13,69 @@ import org.junit.Test;
  */
 public class CSVDocumentManipulatorTest {
 
-    private CSVDocumentManipulator manipulator;
     private TabularDocument<Book> tabularDocumentOfBook;
 
     @Before
     public void setUp() throws Exception {
-        manipulator = new CSVDocumentManipulator();
         final TabularDocumentBuilder<Book> tabularDocumentBuilder = new TabularDocumentBuilder<>();
         tabularDocumentBuilder.setClass(Book.class);
         tabularDocumentOfBook = tabularDocumentBuilder.build();
     }
 
+    @Test
+    public void testManipulatorDeliminator() {
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        Assert.assertEquals(null, manipulator.getFieldSeparator());
+
+        manipulator.setFieldSeparator("#");
+        Assert.assertNotEquals(null, manipulator.getFieldSeparator());
+        Assert.assertEquals("#", manipulator.getFieldSeparator());
+        Assert.assertNotEquals(",", manipulator.getFieldSeparator());
+    }
+
     @Test(expected = InvalidCSVRowException.class)
-    public void testFromStringNull() {
+    public void testFromStringNullForCommaSign() {
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator(",");
         final Book book = manipulator.fromString(null, tabularDocumentOfBook);
     }
 
     @Test(expected = InvalidCSVRowException.class)
-    public void testFromStringEmpty() {
+    public void testFromStringNullForHashSign() {
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator("#");
+        final Book book = manipulator.fromString(null, tabularDocumentOfBook);
+    }
+
+    @Test(expected = InvalidCSVRowException.class)
+    public void testFromStringEmptyForComma() {
         String line = "";
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator(",");
+        final Book book = manipulator.fromString(line, tabularDocumentOfBook);
+    }
+
+    @Test(expected = InvalidCSVRowException.class)
+    public void testFromStringEmptyForHashSign() {
+        String line = "";
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator("#");
         final Book book = manipulator.fromString(line, tabularDocumentOfBook);
     }
 
     @Test(expected = InvalidCSVRowException.class)
     public void testFromStringWithThreeColumns() {
         String line = "1,2,3";
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator(",");
         final Book book = manipulator.fromString(line, tabularDocumentOfBook);
 
     }
 
     @Test
-    public void testFromEmptyObject() {
+    public void testFromEmptyObjectForComma() {
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator(",");
         String result = manipulator.toString(tabularDocumentOfBook, new Book());
         Assert.assertNotEquals(null, result);
         Assert.assertEquals(",,,,,,,,", result);
@@ -51,9 +83,22 @@ public class CSVDocumentManipulatorTest {
     }
 
     @Test
-    public void testFromObjectWithSingleValue() {
+    public void testFromEmptyObjectForHashSign() {
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator("#");
+        String result = manipulator.toString(tabularDocumentOfBook, new Book());
+        Assert.assertNotEquals(null, result);
+        Assert.assertEquals("########", result);
+
+    }
+
+    @Test
+    public void testFromObjectWithSingleValueForComma() {
         Book book = new Book();
         book.setTitle("First");
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+
+        manipulator.setFieldSeparator(",");
         String result = manipulator.toString(tabularDocumentOfBook, book);
         Assert.assertNotEquals(null, result);
         Assert.assertEquals("First,,,,,,,,", result);
@@ -72,8 +117,34 @@ public class CSVDocumentManipulatorTest {
     }
 
     @Test
+    public void testFromObjectWithSingleValueForHashSign() {
+        Book book = new Book();
+        book.setTitle("First");
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+
+        manipulator.setFieldSeparator("#");
+        String result = manipulator.toString(tabularDocumentOfBook, book);
+        Assert.assertNotEquals(null, result);
+        Assert.assertEquals("First########", result);
+        Assert.assertNotEquals("#First######,", result);
+        Assert.assertNotEquals("########First", result);
+
+        book = new Book();
+        book.setAuthor("Reza");
+        result = manipulator.toString(tabularDocumentOfBook, book);
+        Assert.assertNotEquals(null, result);
+        Assert.assertEquals("#Reza#######", result);
+        Assert.assertNotEquals("########", result);
+        Assert.assertNotEquals("##Reza#####,", result);
+        Assert.assertNotEquals("###N#####", result);
+
+    }
+
+    @Test
     public void testFromStringWithSingleValue() {
         String line = "First,,,,,,,,";
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator(",");
         Book result =  manipulator.fromString(line, tabularDocumentOfBook);
 
         Book book = new Book();
@@ -97,6 +168,8 @@ public class CSVDocumentManipulatorTest {
 
     @Test
     public void testToObjectWithSingleValue() {
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator(",");
         final Book result = manipulator.fromString("First,,,,,,,,", tabularDocumentOfBook);
         Book book = new Book();
         book.setTitle("First");
@@ -110,6 +183,8 @@ public class CSVDocumentManipulatorTest {
     @Test
     public void testFromString() {
         String line = ",Reza Mousavi,12.5,2016-07-15,,Persian,,,1235432";
+        final CSVDocumentManipulator manipulator = new CSVDocumentManipulator();
+        manipulator.setFieldSeparator(",");
         final Book book = manipulator.fromString(line, tabularDocumentOfBook);
 
     }
